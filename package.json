@@ -1,0 +1,31 @@
+{
+  "name": "antigravity-task-hub",
+  "version": "1.0.0",
+  "description": "Google Antigravity 风格系统级内生贴附侧边栏与前额叶认知协处理器任务中枢",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "electron scripts/verify-attached-sidebar.js && electron scripts/verify-ai-companion.js",
+    "test:sidebar": "electron scripts/verify-attached-sidebar.js",
+    "test:companion": "electron scripts/verify-ai-companion.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AsherEthan/antigravity-task-hub.git"
+  },
+  "keywords": [
+    "antigravity",
+    "sidebar",
+    "electron",
+    "prefrontal-cortex",
+    "cognitive-prosthetics",
+    "task-management",
+    "slash-commands",
+    "artifacts"
+  ],
+  "author": "AsherEthan",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^33.4.11"
+  }
+}

@@ -1,0 +1,758 @@
+{
+  "activeProjectId": "proj_eeg_001",
+  "userSettings": {
+    "apiKey": "",
+    "baseUrl": "https://api.deepseek.com/v1",
+    "model": "deepseek-chat",
+    "gameTheme": "apple-dark-theme",
+    "hudAlwaysOnTop": true,
+    "hudOpacity": 0.95
+  },
+  "playerProfile": {
+    "convergenceRate": 100,
+    "possibilityCount": 132,
+    "completedStepsCount": 70,
+    "totalXp": 8450,
+    "comboStreak": 71
+  },
+  "artifacts": [
+    {
+      "id": "art_seed_shred_01",
+      "type": "shred",
+      "command": "/shred",
+      "title": "排查前额微眼动伪迹干扰 (2分钟物理微动作粉碎)",
+      "query": "排除眼皮微颤对脑电Alpha频段的电位漂移",
+      "mountedContexts": [
+        {
+          "type": "clipboard",
+          "label": "@clipboard",
+          "preview": "EEG Signal noise at 10Hz"
+        }
+      ],
+      "createdAt": 1790855933042,
+      "updatedAt": 1790859533042,
+      "status": "in-progress",
+      "progress": {
+        "totalSteps": 3,
+        "completedSteps": 1,
+        "percent": 33
+      },
+      "steps": [
+        {
+          "id": "s1",
+          "title": "打开采集软件终端，确认 10Hz 基线采样",
+          "actionVerb": "打开",
+          "estMinutes": 1,
+          "completed": true,
+          "completedAt": 1790857733042
+        },
+        {
+          "id": "s2",
+          "title": "运行 15 分钟眼罩对比测试，记录电位方差",
+          "actionVerb": "运行",
+          "estMinutes": 2,
+          "completed": false,
+          "completedAt": null
+        },
+        {
+          "id": "s3",
+          "title": "记录滤波前后信噪比差值并写入日志",
+          "actionVerb": "记录",
+          "estMinutes": 2,
+          "completed": false,
+          "completedAt": null
+        }
+      ]
+    }
+  ],
+  "activeArtifactId": "art_seed_shred_01",
+  "projects": [
+    {
+      "id": "proj_eeg_001",
+      "title": "EEG 脑电 × 冥想神经机制探测",
+      "description": "从客观电生理信号切入，寻找闭眼冥想状态的可重复量化指标，剥离肌电伪迹。",
+      "status": "active",
+      "currentChapter": "第 2 阶段 · 排除伪迹与建立对照",
+      "createdAt": 1790427533042,
+      "cockpit": {
+        "coreQuestion": "操作性定义「冥想状态」的神经电生理特征，区分真实神经信号与额部微肌电",
+        "currentBottleneck": "消费级脑电仪的 Theta 波剧烈波动，70% 疑似为眼球微颤与额肌电位污染，缺乏客观基线",
+        "nextAction": "执行 15 分钟遮光眼罩 A/B 对照实测（对比 4-8Hz 频段能量方差衰减率）",
+        "actionCompleted": true,
+        "unknowns": [
+          "不同冥想流派（观呼吸 vs 慈悲冥想）的脑电功率谱是否存在统一基线？",
+          "额轮匝肌慢速微漂移与 4-8Hz Theta 频段的耦合强度多大？"
+        ],
+        "tacticalCritique": "指挥官，警惕虚假忙碌 (Activity ≠ Progress)！不要再看第 13 篇文献了，现在整个系统的唯一致命卡点是肌电伪迹，快去跑 15 分钟眼罩实测！"
+      },
+      "clues": [
+        {
+          "type": "question",
+          "title": "并发线索 #49",
+          "content": "内容描述 #49",
+          "id": "clue_1790859533070_50_mj8q",
+          "timestamp": 1790859533070,
+          "parentId": "clue_1790859533054_9_9ega",
+          "level": 1,
+          "x": 340,
+          "y": 80,
+          "radius": 28
+        },
+        {
+          "type": "observation",
+          "title": "并发线索 #48",
+          "content": "内容描述 #48",
+          "id": "clue_1790859533070_49_kubl",
+          "timestamp": 1790859533070,
+          "level": 0,
+          "x": 100,
+          "y": 1810,
+          "radius": 28
+        },
+        {
+          "type": "evidence",
+          "title": "并发线索 #47",
+          "content": "内容描述 #47",
+          "id": "clue_1790859533070_48_dql6",
+          "timestamp": 1790859533070,
+          "parentId": "clue_1790859533053_7_zzzf",
+          "level": 3,
+          "x": 820,
+          "y": 80,
+          "radius": 28
+        },
+        {
+          "type": "hypothesis",
+          "title": "并发线索 #46",
+          "content": "内容描述 #46",
+          "id": "clue_1790859533069_47_ndra",
+          "timestamp": 1790859533069,
+          "parentId": "clue_1790859533054_10_bs1o",
+          "level": 2,
+          "x": 580,
+          "y": 1110,
+          "radius": 28
+        },
+        {
+          "type": "question",
+          "title": "并发线索 #45",
+          "content": "内容描述 #45",
+          "id": "clue_1790859533069_46_51y9",
+          "timestamp": 1790859533069,
+          "parentId": "clue_1790859533054_9_9ega",
+          "level": 1,
+          "x": 340,
+          "y": 1110,
+          "radius": 28
+        },
+        {
+          "type": "observation",
+          "title": "并发线索 #44",
+          "content": "内容描述 #44",
+          "id": "clue_1790859533068_45_ndkv",
+          "timestamp": 1790859533068,
+          "level": 0,
+          "x": 100,
+          "y": 1680,
+          "radius": 28
+        },
+        {
+          "type": "evidence",
+          "title": "并发线索 #43",
+          "content": "内容描述 #43",
+          "id": "clue_1790859533068_44_yiyx",
+          "timestamp": 1790859533068,
+          "parentId": "clue_1790859533053_7_zzzf",
+          "level": 3,
+          "x": 820,
+          "y": 980,
+          "radius": 28
+        },
+        {
+          "type": "hypothesis",
+          "title": "并发线索 #42",
+          "content": "内容描述 #42",
+          "id": "clue_1790859533067_43_klmn",
+          "timestamp": 1790859533067,
+          "parentId": "clue_1790859533054_10_bs1o",
+          "level": 2,
+          "x": 580,
+          "y": 80,
+          "radius": 28
+        },
+        {
+          "type": "question",
+          "title": "并发线索 #41",
+          "content": "内容描述 #41",
+          "id": "clue_1790859533067_42_gl1p",
+          "timestamp": 1790859533067,
+          "parentId": "clue_1790859533054_9_9ega",
+          "level": 1,
+          "x": 340,
+          "y": 80,
+          "radius": 28
+        },
+        {
+          "type": "observation",
+          "title": "并发线索 #40",
+          "content": "内容描述 #40",
+          "id": "clue_1790859533067_41_hq9c",
+          "timestamp": 1790859533067,
+          "level": 0,
+          "x": 100,
+          "y": 1550,
+          "radius": 28
+        },
+        {
+          "type": "evidence",
+          "title": "并发线索 #39",
+          "content": "内容描述 #39",
+          "id": "clue_1790859533066_40_737p",
+          "timestamp": 1790859533066,
+          "parentId": "clue_1790859533053_7_zzzf",
+          "level": 3,
+          "x": 820,
+          "y": 80,
+          "radius": 28
+        },
+        {
+          "type": "hypothesis",
+          "title": "并发线索 #38",
+          "content": "内容描述 #38",
+          "id": "clue_1790859533066_39_c8q9",
+          "timestamp": 1790859533066,
+          "parentId": "clue_1790859533054_10_bs1o",
+          "level": 2,
+          "x": 580,
+          "y": 990,
+          "radius": 28
+        },
+        {
+          "type": "question",
+          "title": "并发线索 #37",
+          "content": "内容描述 #37",
+          "id": "clue_1790859533065_38_ixnz",
+          "timestamp": 1790859533065,
+          "parentId": "clue_1790859533054_9_9ega",
+          "level": 1,
+          "x": 340,
+          "y": 990,
+          "radius": 28
+        },
+        {
+          "type": "observation",
+          "title": "并发线索 #36",
+          "content": "内容描述 #36",
+          "id": "clue_1790859533065_37_zpud",
+          "timestamp": 1790859533065,
+          "level": 0,
+          "x": 100,
+          "y": 1420,
+          "radius": 28
+        },
+        {
+          "type": "evidence",
+          "title": "并发线索 #35",
+          "content": "内容描述 #35",
+          "id": "clue_1790859533065_36_qudq",
+          "timestamp": 1790859533065,
+          "parentId": "clue_1790859533053_7_zzzf",
+          "level": 3,
+          "x": 820,
+          "y": 860,
+          "radius": 28
+        },
+        {
+          "type": "hypothesis",
+          "title": "并发线索 #34",
+          "content": "内容描述 #34",
+          "id": "clue_1790859533064_35_tkn5",
+          "timestamp": 1790859533064,
+          "parentId": "clue_1790859533054_10_bs1o",
+          "level": 2,
+          "x": 580,
+          "y": 150,
+          "radius": 28
+        },
+        {
+          "type": "question",
+          "title": "并发线索 #33",
+          "content": "内容描述 #33",
+          "id": "clue_1790859533064_34_8skz",
+          "timestamp": 1790859533064,
+          "parentId": "clue_1790859533054_9_9ega",
+          "level": 1,
+          "x": 340,
+          "y": 150,
+          "radius": 28
+        },
+        {
+          "type": "observation",
+          "title": "并发线索 #32",
+          "content": "内容描述 #32",
+          "id": "clue_1790859533064_33_11lw",
+          "timestamp": 1790859533064,
+          "level": 0,
+          "x": 100,
+          "y": 1290,
+          "radius": 28
+        },
+        {
+          "type": "evidence",
+          "title": "并发线索 #31",
+          "content": "内容描述 #31",
+          "id": "clue_1790859533063_32_8apg",
+          "timestamp": 1790859533063,
+          "parentId": "clue_1790859533053_7_zzzf",
+          "level": 3,
+          "x": 820,
+          "y": 80,
+          "radius": 28
+        },
+        {
+          "type": "hypothesis",
+          "title": "并发线索 #30",
+          "content": "内容描述 #30",
+          "id": "clue_1790859533063_31_dm8n",
+          "timestamp": 1790859533063,
+          "parentId": "clue_1790859533054_10_bs1o",
+          "level": 2,
+          "x": 580,
+          "y": 870,
+          "radius": 28
+        },
+        {
+          "type": "question",
+          "title": "并发线索 #29",
+          "content": "内容描述 #29",
+          "id": "clue_1790859533062_30_v20b",
+          "timestamp": 1790859533062,
+          "parentId": "clue_1790859533054_9_9ega",
+          "level": 1,
+          "x": 340,
+          "y": 870,
+          "radius": 28
+        },
+        {
+          "type": "observation",
+          "title": "并发线索 #28",
+          "content": "内容描述 #28",
+          "id": "clue_1790859533062_29_fazo",
+          "timestamp": 1790859533062,
+          "level": 0,
+          "x": 100,
+          "y": 1160,
+          "radius": 28
+        },
+        {
+          "type": "evidence",
+          "title": "并发线索 #27",
+          "content": "内容描述 #27",
+          "id": "clue_1790859533062_28_9je3",
+          "timestamp": 1790859533062,
+          "parentId": "clue_1790859533053_7_zzzf",
+          "level": 3,
+          "x": 820,
+          "y": 740,
+          "radius": 28
+        },
+        {
+          "type": "hypothesis",
+          "title": "并发线索 #26",
+          "content": "内容描述 #26",
+          "id": "clue_1790859533061_27_6n24",
+          "timestamp": 1790859533061,
+          "parentId": "clue_1790859533054_10_bs1o",
+          "level": 2,
+          "x": 580,
+          "y": 270,
+          "radius": 28
+        },
+        {
+          "type": "question",
+          "title": "并发线索 #25",
+          "content": "内容描述 #25",
+          "id": "clue_1790859533061_26_novv",
+          "timestamp": 1790859533061,
+          "parentId": "clue_1790859533054_9_9ega",
+          "level": 1,
+          "x": 340,
+          "y": 270,
+          "radius": 28
+        },
+        {
+          "type": "observation",
+          "title": "并发线索 #24",
+          "content": "内容描述 #24",
+          "id": "clue_1790859533060_25_0xh4",
+          "timestamp": 1790859533060,
+          "level": 0,
+          "x": 100,
+          "y": 1030,
+          "radius": 28
+        },
+        {
+          "type": "evidence",
+          "title": "并发线索 #23",
+          "content": "内容描述 #23",
+          "id": "clue_1790859533059_24_fvsb",
+          "timestamp": 1790859533059,
+          "parentId": "clue_1790859533053_7_zzzf",
+          "level": 3,
+          "x": 820,
+          "y": 140,
+          "radius": 28
+        },
+        {
+          "type": "hypothesis",
+          "title": "并发线索 #22",
+          "content": "内容描述 #22",
+          "id": "clue_1790859533059_23_14tc",
+          "timestamp": 1790859533059,
+          "parentId": "clue_1790859533054_10_bs1o",
+          "level": 2,
+          "x": 580,
+          "y": 750,
+          "radius": 28
+        },
+        {
+          "type": "question",
+          "title": "并发线索 #21",
+          "content": "内容描述 #21",
+          "id": "clue_1790859533059_22_huuj",
+          "timestamp": 1790859533059,
+          "parentId": "clue_1790859533054_9_9ega",
+          "level": 1,
+          "x": 340,
+          "y": 750,
+          "radius": 28
+        },
+        {
+          "type": "observation",
+          "title": "并发线索 #20",
+          "content": "内容描述 #20",
+          "id": "clue_1790859533058_21_jckl",
+          "timestamp": 1790859533058,
+          "level": 0,
+          "x": 100,
+          "y": 900,
+          "radius": 28
+        },
+        {
+          "type": "evidence",
+          "title": "并发线索 #19",
+          "content": "内容描述 #19",
+          "id": "clue_1790859533058_20_kwjy",
+          "timestamp": 1790859533058,
+          "parentId": "clue_1790859533053_7_zzzf",
+          "level": 3,
+          "x": 820,
+          "y": 620,
+          "radius": 28
+        },
+        {
+          "type": "hypothesis",
+          "title": "并发线索 #18",
+          "content": "内容描述 #18",
+          "id": "clue_1790859533057_19_5l0i",
+          "timestamp": 1790859533057,
+          "parentId": "clue_1790859533054_10_bs1o",
+          "level": 2,
+          "x": 580,
+          "y": 390,
+          "radius": 28
+        },
+        {
+          "type": "question",
+          "title": "并发线索 #17",
+          "content": "内容描述 #17",
+          "id": "clue_1790859533057_18_znf8",
+          "timestamp": 1790859533057,
+          "parentId": "clue_1790859533054_9_9ega",
+          "level": 1,
+          "x": 340,
+          "y": 390,
+          "radius": 28
+        },
+        {
+          "type": "observation",
+          "title": "并发线索 #16",
+          "content": "内容描述 #16",
+          "id": "clue_1790859533057_17_h9hh",
+          "timestamp": 1790859533057,
+          "level": 0,
+          "x": 100,
+          "y": 770,
+          "radius": 28
+        },
+        {
+          "type": "evidence",
+          "title": "并发线索 #15",
+          "content": "内容描述 #15",
+          "id": "clue_1790859533056_16_u1uq",
+          "timestamp": 1790859533056,
+          "parentId": "clue_1790859533053_7_zzzf",
+          "level": 3,
+          "x": 820,
+          "y": 260,
+          "radius": 28
+        },
+        {
+          "type": "hypothesis",
+          "title": "并发线索 #14",
+          "content": "内容描述 #14",
+          "id": "clue_1790859533056_15_wsv2",
+          "timestamp": 1790859533056,
+          "parentId": "clue_1790859533054_10_bs1o",
+          "level": 2,
+          "x": 580,
+          "y": 630,
+          "radius": 28
+        },
+        {
+          "type": "question",
+          "title": "并发线索 #13",
+          "content": "内容描述 #13",
+          "id": "clue_1790859533056_14_plg6",
+          "timestamp": 1790859533056,
+          "parentId": "clue_1790859533054_9_9ega",
+          "level": 1,
+          "x": 340,
+          "y": 630,
+          "radius": 28
+        },
+        {
+          "type": "observation",
+          "title": "并发线索 #12",
+          "content": "内容描述 #12",
+          "id": "clue_1790859533056_13_dszi",
+          "timestamp": 1790859533056,
+          "level": 0,
+          "x": 100,
+          "y": 640,
+          "radius": 28
+        },
+        {
+          "type": "evidence",
+          "title": "并发线索 #11",
+          "content": "内容描述 #11",
+          "id": "clue_1790859533055_12_8h2k",
+          "timestamp": 1790859533055,
+          "parentId": "clue_1790859533053_7_zzzf",
+          "level": 3,
+          "x": 820,
+          "y": 500,
+          "radius": 28
+        },
+        {
+          "type": "hypothesis",
+          "title": "并发线索 #10",
+          "content": "内容描述 #10",
+          "id": "clue_1790859533055_11_9set",
+          "timestamp": 1790859533055,
+          "parentId": "clue_1790859533054_10_bs1o",
+          "level": 2,
+          "x": 580,
+          "y": 510,
+          "radius": 28
+        },
+        {
+          "type": "question",
+          "title": "并发线索 #9",
+          "content": "内容描述 #9",
+          "id": "clue_1790859533054_10_bs1o",
+          "timestamp": 1790859533054,
+          "parentId": "clue_1790859533054_9_9ega",
+          "level": 1,
+          "x": 340,
+          "y": 510,
+          "radius": 28
+        },
+        {
+          "type": "observation",
+          "title": "并发线索 #8",
+          "content": "内容描述 #8",
+          "id": "clue_1790859533054_9_9ega",
+          "timestamp": 1790859533054,
+          "level": 0,
+          "x": 100,
+          "y": 510,
+          "radius": 28
+        },
+        {
+          "type": "evidence",
+          "title": "并发线索 #7",
+          "content": "内容描述 #7",
+          "id": "clue_1790859533054_8_pigy",
+          "timestamp": 1790859533054,
+          "parentId": "clue_1790859533053_7_zzzf",
+          "level": 3,
+          "x": 820,
+          "y": 380,
+          "radius": 28
+        },
+        {
+          "type": "hypothesis",
+          "title": "并发线索 #6",
+          "content": "内容描述 #6",
+          "id": "clue_1790859533053_7_zzzf",
+          "timestamp": 1790859533053,
+          "parentId": "clue_1790859533053_6_ozkc",
+          "level": 2,
+          "x": 580,
+          "y": 380,
+          "radius": 28
+        },
+        {
+          "type": "question",
+          "title": "并发线索 #5",
+          "content": "内容描述 #5",
+          "id": "clue_1790859533053_6_ozkc",
+          "timestamp": 1790859533053,
+          "parentId": "clue_1790859533053_5_pa2t",
+          "level": 1,
+          "x": 340,
+          "y": 380,
+          "radius": 28
+        },
+        {
+          "type": "observation",
+          "title": "并发线索 #4",
+          "content": "内容描述 #4",
+          "id": "clue_1790859533053_5_pa2t",
+          "timestamp": 1790859533053,
+          "level": 0,
+          "x": 100,
+          "y": 380,
+          "radius": 28
+        },
+        {
+          "type": "evidence",
+          "title": "并发线索 #3",
+          "content": "内容描述 #3",
+          "id": "clue_1790859533052_4_bpmg",
+          "timestamp": 1790859533052,
+          "parentId": "clue_1790859533052_3_zko4",
+          "level": 3,
+          "x": 820,
+          "y": 250,
+          "radius": 28
+        },
+        {
+          "type": "hypothesis",
+          "title": "并发线索 #2",
+          "content": "内容描述 #2",
+          "id": "clue_1790859533052_3_zko4",
+          "timestamp": 1790859533052,
+          "parentId": "clue_1790859533052_2_yyk6",
+          "level": 2,
+          "x": 580,
+          "y": 250,
+          "radius": 28
+        },
+        {
+          "type": "question",
+          "title": "并发线索 #1",
+          "content": "内容描述 #1",
+          "id": "clue_1790859533052_2_yyk6",
+          "timestamp": 1790859533052,
+          "parentId": "clue_1790859533051_1_glne",
+          "level": 1,
+          "x": 340,
+          "y": 250,
+          "radius": 28
+        },
+        {
+          "type": "observation",
+          "title": "并发线索 #0",
+          "content": "内容描述 #0",
+          "id": "clue_1790859533051_1_glne",
+          "timestamp": 1790859533051,
+          "level": 0,
+          "x": 100,
+          "y": 250,
+          "radius": 28
+        },
+        {
+          "id": "clue_001",
+          "type": "observation",
+          "title": "闭眼静息 4 分钟后的频段异动",
+          "content": "测试发现在闭眼静息 4 分钟后，受试者后枕部 Alpha 波功率上升，但前额叶 Theta 波波动非常剧烈且不规律。",
+          "timestamp": 1790600333042,
+          "source": "实测 4 通道 EEG 数据记录",
+          "tags": [
+            "事实目击",
+            "异常现象"
+          ]
+        },
+        {
+          "id": "clue_002",
+          "type": "question",
+          "title": "Theta 剧烈波动的来源究竟是什么？",
+          "content": "前额叶 Theta 波的不规则波动，究竟是进入深度专注的神经特征，还是眼球慢速微动带来的伪迹？",
+          "timestamp": 1790643533042,
+          "parentId": "clue_001",
+          "tags": [
+            "探究线索",
+            "因果疑问"
+          ]
+        },
+        {
+          "id": "clue_003",
+          "type": "hypothesis",
+          "title": "假说 B：微眼动与额肌电位传导",
+          "content": "如果 Theta 波动是由眼微动造成的肌电污染，那么在佩戴遮光眼罩完全放松眼轮匝肌时，其频段方差应显著衰减 50% 以上。",
+          "timestamp": 1790729933042,
+          "parentId": "clue_002",
+          "tags": [
+            "机制假说",
+            "可检验预言"
+          ]
+        },
+        {
+          "id": "clue_004",
+          "type": "evidence",
+          "title": "顶刊文献基线调研报告",
+          "content": "《Frontal Midline Theta in Meditation》(2021) 指出：未通过独立成分分析(ICA)剥离眼动前，初学者 80% 的突发低频波实为肌电电位。",
+          "timestamp": 1790790413042,
+          "parentId": "clue_003",
+          "tags": [
+            "外部证物",
+            "文献数据"
+          ]
+        },
+        {
+          "id": "clue_005",
+          "type": "bottleneck",
+          "title": "核心瓶颈：伪迹剥离算法与硬件通道受限",
+          "content": "当前购买的便携设备仅 4 通道，无法运行完整 ICA 空间矩阵分解，必须依靠物理隔离（眼罩）设计最小对照方案。",
+          "timestamp": 1790841533042,
+          "tags": [
+            "关键卡点",
+            "核心瓶颈"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proj_saas_002",
+      "title": "独立开发者产品商业化 MVP 验证",
+      "description": "从开发者工具切入，验证真实付费意愿，避免无休止堆砌不被需要的边缘功能。",
+      "status": "idle",
+      "currentChapter": "第 1 阶段 · 价值主张与首发种子用户",
+      "createdAt": 1789563533042,
+      "cockpit": {
+        "coreQuestion": "目标用户究竟愿意为“解决哪个单一最痛卡点”掏出钱包？",
+        "currentBottleneck": "尚未拿到 5 个愿意预付费的真实客户承诺，容易陷入自嗨式写代码",
+        "nextAction": "制作 1 页极简视频落地页，在社群内寻找 3 位愿意深度访谈的目标用户",
+        "actionCompleted": false,
+        "unknowns": [
+          "真实愿付价格区间是多少？",
+          "最大竞争对手是开源免费方案还是用户的惯性？"
+        ],
+        "tacticalCritique": "不要在没有第一单付费前写第 2000 行代码！现在的瓶颈是验证付费假设。"
+      },
+      "clues": []
+    }
+  ]
+}

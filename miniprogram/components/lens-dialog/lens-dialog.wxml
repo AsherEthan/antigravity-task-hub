@@ -1,0 +1,121 @@
+<!-- components/lens-dialog/lens-dialog.wxml -->
+<view class="dialog-mask" wx:if="{{visible}}" bindtap="handleClose">
+  <view class="dialog-container glass-card shadow-sm" catchtap="preventBubble">
+    
+    <!-- 弹窗头部 -->
+    <view class="dialog-header">
+      <view class="header-tag">
+        <text class="tag-icon">{{mode === 'cockpit' ? '⚡' : '✨'}}</text>
+        <text class="dialog-title">{{mode === 'cockpit' ? '认知状态舵盘提炼建议' : dialogTitle}}</text>
+      </view>
+      <view class="close-btn" hover-class="tap-active" bindtap="handleClose">
+        <text class="close-icon">×</text>
+      </view>
+    </view>
+
+    <!-- 加载中状态 -->
+    <view class="loading-state" wx:if="{{isLoading}}">
+      <view class="spin-icon">⏳</view>
+      <text class="loading-tip">正在通过认知透镜深度推演中...</text>
+      <text class="sub-tip">正在分析事实、排查伪迹与推演瓶颈</text>
+    </view>
+
+    <!-- 模式 A：状态舵盘提炼建议预览 -->
+    <scroll-view scroll-y="true" class="dialog-scroll-body" wx:elif="{{mode === 'cockpit' && cockpitProposal}}">
+      <!-- 进展锐评 -->
+      <view class="critique-banner" wx:if="{{cockpitProposal.progress_critique}}">
+        <text class="critique-icon">💡</text>
+        <text class="critique-text">{{cockpitProposal.progress_critique}}</text>
+      </view>
+
+      <!-- 核心问题 -->
+      <view class="proposal-field">
+        <text class="field-label color-obs">建议核心问题 (Qt):</text>
+        <textarea 
+          class="field-input" 
+          value="{{cockpitProposal.core_question}}" 
+          auto-height="true"
+          maxlength="200"
+          data-field="core_question"
+          bindinput="handleProposalChange"
+        />
+      </view>
+
+      <!-- 核心瓶颈 -->
+      <view class="proposal-field">
+        <text class="field-label color-bot">建议第一瓶颈 (Bt):</text>
+        <textarea 
+          class="field-input" 
+          value="{{cockpitProposal.current_bottleneck}}" 
+          auto-height="true"
+          maxlength="200"
+          data-field="current_bottleneck"
+          bindinput="handleProposalChange"
+        />
+      </view>
+
+      <!-- 下一步最小行动 -->
+      <view class="proposal-field">
+        <text class="field-label color-evi">建议下一步最小行动 (At):</text>
+        <textarea 
+          class="field-input" 
+          value="{{cockpitProposal.next_action}}" 
+          auto-height="true"
+          maxlength="200"
+          data-field="next_action"
+          bindinput="handleProposalChange"
+        />
+      </view>
+
+      <!-- 未解之谜列表 -->
+      <view class="proposal-field" wx:if="{{cockpitProposal.unknowns && cockpitProposal.unknowns.length > 0}}">
+        <text class="field-label color-que">建议未解之谜 (Ut):</text>
+        <view class="unknowns-preview">
+          <view class="u-item" wx:for="{{cockpitProposal.unknowns}}" wx:key="index">
+            <text class="u-bullet">•</text>
+            <text class="u-text">{{item}}</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+
+    <!-- 模式 B：单条透镜执行结果预览 -->
+    <scroll-view scroll-y="true" class="dialog-scroll-body" wx:elif="{{mode === 'lens' && lensResult}}">
+      <view class="lens-summary-box">
+        <text class="summary-text" user-select="true">{{lensResult.content}}</text>
+      </view>
+
+      <view class="lens-items-box" wx:if="{{lensResult.items && lensResult.items.length > 0}}">
+        <text class="box-title">衍生思考 / 候选行动项:</text>
+        <view class="l-item" wx:for="{{lensResult.items}}" wx:key="index">
+          <text class="l-dot">›</text>
+          <text class="l-text" user-select="true">{{item}}</text>
+        </view>
+      </view>
+    </scroll-view>
+
+    <!-- 弹窗底部操作按钮 -->
+    <view class="dialog-footer" wx:if="{{!isLoading}}">
+      <button class="btn-cancel" hover-class="tap-active" bindtap="handleClose">取消</button>
+      
+      <button 
+        class="btn-confirm" 
+        hover-class="tap-active" 
+        wx:if="{{mode === 'cockpit'}}" 
+        bindtap="handleConfirmCockpit"
+      >
+        确认同步到舵盘
+      </button>
+
+      <button 
+        class="btn-confirm" 
+        hover-class="tap-active" 
+        wx:elif="{{mode === 'lens'}}" 
+        bindtap="handleMountLens"
+      >
+        挂载到卡片
+      </button>
+    </view>
+
+  </view>
+</view>

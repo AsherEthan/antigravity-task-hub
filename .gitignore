@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Agent execution & teamwork temporary state
+.agents/
+.gemini/
+
+# Logs & crash dumps
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+crash-dumps/
+*.dmp
+
+# OS & IDE metadata
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

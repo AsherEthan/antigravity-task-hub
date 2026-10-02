@@ -1,0 +1,80 @@
+<!-- components/quick-input/quick-input.wxml -->
+<view class="quick-input-container">
+  <!-- 认知类型快捷胶囊选择条 -->
+  <scroll-view class="type-selector-scroll" scroll-x="true" enable-flex="true">
+    <view class="type-pills-row">
+      <view 
+        class="type-pill {{selectedType === 'observation' ? 'pill-active-observation' : ''}}"
+        hover-class="tap-active"
+        data-type="observation"
+        bindtap="handleSelectType"
+      >
+        <text class="pill-icon">👁️</text>
+        <text class="pill-text">观察</text>
+      </view>
+
+      <view 
+        class="type-pill {{selectedType === 'question' ? 'pill-active-question' : ''}}"
+        hover-class="tap-active"
+        data-type="question"
+        bindtap="handleSelectType"
+      >
+        <text class="pill-icon">❓</text>
+        <text class="pill-text">疑问</text>
+      </view>
+
+      <view 
+        class="type-pill {{selectedType === 'hypothesis' ? 'pill-active-hypothesis' : ''}}"
+        hover-class="tap-active"
+        data-type="hypothesis"
+        bindtap="handleSelectType"
+      >
+        <text class="pill-icon">💡</text>
+        <text class="pill-text">假设</text>
+      </view>
+
+      <view 
+        class="type-pill {{selectedType === 'evidence' ? 'pill-active-evidence' : ''}}"
+        hover-class="tap-active"
+        data-type="evidence"
+        bindtap="handleSelectType"
+      >
+        <text class="pill-icon">🔬</text>
+        <text class="pill-text">证据</text>
+      </view>
+
+      <view 
+        class="type-pill {{selectedType === 'bottleneck' ? 'pill-active-bottleneck' : ''}}"
+        hover-class="tap-active"
+        data-type="bottleneck"
+        bindtap="handleSelectType"
+      >
+        <text class="pill-icon">🚧</text>
+        <text class="pill-text">瓶颈</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 输入框 + 提交按钮 -->
+  <view class="input-action-bar glass-card shadow-sm">
+    <textarea 
+      class="input-field" 
+      placeholder="{{placeholderText}}" 
+      placeholder-class="input-placeholder"
+      value="{{inputText}}"
+      maxlength="500"
+      auto-height="true"
+      cursor-spacing="20"
+      bindinput="handleInputChange"
+      bindconfirm="handleSubmit"
+    />
+    <button 
+      class="btn-submit {{canSubmit ? 'btn-submit-active' : ''}}" 
+      hover-class="tap-active" 
+      disabled="{{!canSubmit}}"
+      bindtap="handleSubmit"
+    >
+      <text class="submit-text">沉淀</text>
+    </button>
+  </view>
+</view>

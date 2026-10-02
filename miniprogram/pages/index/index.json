@@ -1,0 +1,11 @@
+{
+  "usingComponents": {
+    "state-cockpit": "/components/state-cockpit/state-cockpit",
+    "stream-item": "/components/stream-item/stream-item",
+    "quick-input": "/components/quick-input/quick-input",
+    "lens-dialog": "/components/lens-dialog/lens-dialog"
+  },
+  "navigationBarTitleText": "探索导航",
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#090d16"
+}

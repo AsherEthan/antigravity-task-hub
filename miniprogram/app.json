@@ -1,0 +1,16 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/projects/projects",
+    "pages/settings/settings"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#0f172a",
+    "navigationBarTitleText": "探索导航 · 认知脚手架",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#090d16"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

@@ -1,0 +1,96 @@
+<!-- pages/projects/projects.wxml -->
+<view class="projects-container">
+  
+  <view class="top-banner glass-card shadow-sm">
+    <text class="banner-title">独立认知边界</text>
+    <text class="banner-desc">每个探索空间独立维护一套状态舵盘与时间流水，避免不同课题思维交叉干扰。</text>
+  </view>
+
+  <view class="section-title-row">
+    <text class="section-title">所有探索项目</text>
+    <button class="btn-create-proj" hover-class="tap-active" bindtap="openCreateModal">
+      <text class="plus-icon">＋</text>
+      <text class="btn-create-text">新建空间</text>
+    </button>
+  </view>
+
+  <scroll-view scroll-y="true" class="projects-scroll">
+    <view class="projects-list">
+      <view 
+        class="project-card glass-card shadow-sm {{item._id === activeProjectId ? 'active-project-card' : ''}}"
+        wx:for="{{projects}}" 
+        wx:key="_id"
+        data-id="{{item._id}}"
+        hover-class="tap-active"
+        bindtap="selectProject"
+      >
+        <view class="card-header">
+          <view class="proj-name-box">
+            <text class="proj-icon">🧭</text>
+            <text class="proj-title">{{item.title}}</text>
+          </view>
+          <view class="active-badge" wx:if="{{item._id === activeProjectId}}">
+            <text class="badge-dot"></text>
+            <text class="badge-text">当前活跃</text>
+          </view>
+        </view>
+
+        <view class="proj-desc-box" wx:if="{{item.description}}">
+          <text class="proj-desc">{{item.description}}</text>
+        </view>
+
+        <view class="card-footer">
+          <text class="create-time">创建于 {{item.formatTime}}</text>
+          <text class="switch-tip" wx:if="{{item._id !== activeProjectId}}">点击切换 ›</text>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 创建项目弹窗 -->
+  <view class="modal-mask" wx:if="{{isModalOpen}}" bindtap="closeCreateModal">
+    <view class="modal-card glass-card shadow-sm" catchtap="preventBubble">
+      <view class="modal-header">
+        <text class="modal-title">新建探索空间</text>
+        <view class="close-icon" bindtap="closeCreateModal">×</view>
+      </view>
+
+      <view class="modal-body">
+        <view class="form-group">
+          <text class="label">空间主题 / 课题名称</text>
+          <input 
+            class="input-control" 
+            placeholder="例如：量子纠缠算法验证 / 独立产品出海" 
+            placeholder-class="input-placeholder"
+            value="{{newTitle}}"
+            bindinput="onTitleInput"
+          />
+        </view>
+
+        <view class="form-group">
+          <text class="label">愿景 / 初始背景说明 (选填)</text>
+          <textarea 
+            class="textarea-control" 
+            placeholder="简单描述你为什么要开始这个探索，初始的模糊想法..." 
+            placeholder-class="input-placeholder"
+            value="{{newDesc}}"
+            bindinput="onDescInput"
+          />
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <button class="btn-modal-cancel" hover-class="tap-active" bindtap="closeCreateModal">取消</button>
+        <button 
+          class="btn-modal-confirm {{newTitle.trim() ? 'btn-modal-confirm-active' : ''}}" 
+          hover-class="tap-active" 
+          disabled="{{!newTitle.trim()}}"
+          bindtap="submitCreateProject"
+        >
+          立即开启探索
+        </button>
+      </view>
+    </view>
+  </view>
+
+</view>

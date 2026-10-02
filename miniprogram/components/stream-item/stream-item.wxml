@@ -1,0 +1,112 @@
+<!-- components/stream-item/stream-item.wxml -->
+<view class="item-card glass-card shadow-sm border-{{item.type}}">
+  <!-- 头部：认知类型徽章 + 时间 + 操作 -->
+  <view class="item-header">
+    <view class="badge badge-{{item.type}}">
+      <text class="badge-icon">{{typeMeta.icon}}</text>
+      <text class="badge-label">{{typeMeta.label}}</text>
+    </view>
+    <view class="header-right">
+      <text class="time-text">{{formatCreateTime}}</text>
+      <view class="delete-btn" hover-class="tap-active" bindtap="handleDelete">
+        <text class="del-icon">×</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 正文内容 -->
+  <view class="item-content">
+    <text class="content-text" user-select="true">{{item.content}}</text>
+  </view>
+
+  <!-- 溯源脉络标记 (如果有父节点) -->
+  <view class="lineage-tag" wx:if="{{item.created_from}}">
+    <text class="lineage-icon">↳</text>
+    <text class="lineage-text">衍化自前序节点</text>
+  </view>
+
+  <!-- 认知透镜触发栏 (4 Sharp Lenses) -->
+  <view class="lens-toolbar">
+    <view class="lens-title">
+      <text class="lens-label">战术透镜技能:</text>
+    </view>
+    <view class="lens-pills">
+      <view 
+        class="lens-btn" 
+        hover-class="tap-active" 
+        data-lens="socratic" 
+        bindtap="handleTriggerLens"
+      >
+        <text class="btn-icon">🔍</text>
+        <text class="btn-text">穿透追问</text>
+      </view>
+
+      <view 
+        class="lens-btn" 
+        hover-class="tap-active" 
+        data-lens="hypotheses" 
+        bindtap="handleTriggerLens"
+      >
+        <text class="btn-icon">💡</text>
+        <text class="btn-text">发散假设</text>
+      </view>
+
+      <view 
+        class="lens-btn" 
+        hover-class="tap-active" 
+        data-lens="test" 
+        bindtap="handleTriggerLens"
+      >
+        <text class="btn-icon">⚡</text>
+        <text class="btn-text">最小验证</text>
+      </view>
+
+      <view 
+        class="lens-btn" 
+        hover-class="tap-active" 
+        data-lens="attribution" 
+        bindtap="handleTriggerLens"
+      >
+        <text class="btn-icon">🎯</text>
+        <text class="btn-text">失败归因</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 挂载的 AI 认知见解折叠区 (Mount & Spin-off) -->
+  <view class="insights-container" wx:if="{{item.ai_insights && item.ai_insights.length > 0}}">
+    <view class="insight-box" wx:for="{{item.ai_insights}}" wx:for-item="insight" wx:key="index">
+      <view class="insight-header">
+        <view class="insight-tag">
+          <text class="spark-icon">✨</text>
+          <text class="insight-name">{{getLensDisplayName(insight.lens)}}</text>
+        </view>
+        <text class="insight-time">{{formatInsightTime(insight.created_at)}}</text>
+      </view>
+
+      <view class="insight-content">
+        <text class="insight-summary" user-select="true">{{insight.content}}</text>
+      </view>
+
+      <!-- 衍生子项列表 + 一键沉淀按钮 -->
+      <view class="spinoff-list" wx:if="{{insight.items && insight.items.length > 0}}">
+        <view class="spinoff-item" wx:for="{{insight.items}}" wx:for-item="subItem" wx:for-index="subIdx" wx:key="subIdx">
+          <view class="subitem-left">
+            <text class="subitem-dot">›</text>
+            <text class="subitem-text" user-select="true">{{subItem}}</text>
+          </view>
+          <view 
+            class="btn-spinoff" 
+            hover-class="tap-active"
+            data-text="{{subItem}}"
+            data-lens="{{insight.lens}}"
+            bindtap="handleSpinOff"
+          >
+            <text class="spinoff-plus">＋</text>
+            <text class="spinoff-label">沉淀为任务</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

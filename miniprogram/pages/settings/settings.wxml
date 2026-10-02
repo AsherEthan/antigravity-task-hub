@@ -1,0 +1,102 @@
+<!-- pages/settings/settings.wxml -->
+<view class="settings-container">
+
+  <!-- 引擎状态卡片 -->
+  <view class="status-card glass-card shadow-sm">
+    <view class="card-header-row">
+      <text class="card-title">系统运行引擎</text>
+      <view class="status-pill {{isCloudConnected ? 'pill-green' : 'pill-amber'}}">
+        <text class="pill-dot"></text>
+        <text class="pill-text">{{isCloudConnected ? '云开发已就绪' : '本地自测降级模式'}}</text>
+      </view>
+    </view>
+    <text class="status-tip">
+      {{isCloudConnected ? '已自动连通微信云开发（云函数中继 + 云数据库持久化）' : '当前未检测到开通云环境，自动采用 LocalStorage 本地存储 + 前端 API 方案，离线亦可完整使用'}}
+    </text>
+  </view>
+
+  <!-- 大模型配置 (BYOK) -->
+  <view class="section-card glass-card shadow-sm">
+    <view class="section-header">
+      <text class="section-title">大模型认知透镜配置 (BYOK)</text>
+      <text class="sub-title">支持 DeepSeek / 智谱 / OpenAI 等兼容协议</text>
+    </view>
+
+    <view class="form-list">
+      <!-- API Key -->
+      <view class="form-item">
+        <view class="item-label-row">
+          <text class="item-label">API Key</text>
+          <text class="toggle-eye" bindtap="toggleKeyVisibility">{{showKey ? '隐藏' : '显示'}}</text>
+        </view>
+        <input 
+          class="item-input" 
+          password="{{!showKey}}" 
+          placeholder="sk-..." 
+          placeholder-class="input-placeholder"
+          value="{{userApiKey}}"
+          bindinput="onApiKeyInput"
+        />
+        <text class="input-hint">留空时将优先使用云端环境默认 Key 或内置启发引擎</text>
+      </view>
+
+      <!-- Base URL -->
+      <view class="form-item">
+        <text class="item-label">API 接入点 (Base URL)</text>
+        <input 
+          class="item-input" 
+          placeholder="https://api.deepseek.com/v1" 
+          placeholder-class="input-placeholder"
+          value="{{customBaseUrl}}"
+          bindinput="onBaseUrlInput"
+        />
+        <text class="input-hint">默认使用 DeepSeek 官方接口</text>
+      </view>
+
+      <!-- 模型选择 -->
+      <view class="form-item">
+        <text class="item-label">模型名称 (Model)</text>
+        <input 
+          class="item-input" 
+          placeholder="deepseek-chat" 
+          placeholder-class="input-placeholder"
+          value="{{model}}"
+          bindinput="onModelInput"
+        />
+        <text class="input-hint">可选：deepseek-chat、deepseek-reasoner 等</text>
+      </view>
+    </view>
+
+    <button class="btn-save" hover-class="tap-active" bindtap="saveLlmSettings">
+      保存模型配置
+    </button>
+  </view>
+
+  <!-- 数据管理与复位 -->
+  <view class="section-card glass-card shadow-sm">
+    <view class="section-header">
+      <text class="section-title">数据管理与调试</text>
+    </view>
+
+    <view class="action-buttons">
+      <button class="btn-action-outline" hover-class="tap-active" bindtap="resetToDemoData">
+        <text class="btn-icon">🌱</text>
+        <text>重置为 EEG 冥想官方示例数据</text>
+      </button>
+
+      <button class="btn-action-danger" hover-class="tap-active" bindtap="clearAllLocalData">
+        <text class="btn-icon">🗑️</text>
+        <text>清空本地全部缓存数据</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- 关于与探索哲学 -->
+  <view class="philosophy-box">
+    <text class="ph-title">探索导航系统公式</text>
+    <text class="ph-formula">Ct = (Gt, Qt, Kt, Ht, Mt, Et, Bt, St)</text>
+    <text class="ph-rule">Progress = ΔProblem State (进展 = 核心问题状态的迁移)</text>
+    <text class="ph-motto">“Agent 的目标不是替代人的探索，而是降低探索的认知摩擦。”</text>
+  </view>
+
+</view>

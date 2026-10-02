@@ -1,0 +1,421 @@
+/* renderer/styles/main.css - Apple Human Interface Design System */
+
+:root {
+  --apple-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+  --apple-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --apple-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ==================== 苹果设计语言色彩与材质系统 (Apple Design System) ==================== */
+/* 默认：macOS Sequoia / visionOS 深空黑曜 (Apple Pro Dark) */
+.apple-dark-theme, .destiny-theme {
+  --g-bg: #090b10;
+  --g-bg-canvas: #06070a;
+  --g-panel: rgba(20, 24, 34, 0.68);
+  --g-panel-elevated: rgba(28, 34, 48, 0.78);
+  --g-panel-subtle: rgba(255, 255, 255, 0.04);
+  --g-border: rgba(255, 255, 255, 0.10);
+  --g-border-strong: rgba(255, 255, 255, 0.18);
+  --g-accent: #0A84FF;
+  --g-accent-gradient: linear-gradient(135deg, #0A84FF, #5E5CE6);
+  --g-urgent: #FF453A;
+  --g-urgent-gradient: linear-gradient(135deg, #FF453A, #FF375F);
+  --g-gold: #FFD60A;
+  --g-success: #30D158;
+  --g-text-primary: #FFFFFF;
+  --g-text-secondary: rgba(235, 235, 245, 0.65);
+  --g-text-tertiary: rgba(235, 235, 245, 0.38);
+  --g-blur: blur(28px) saturate(190%);
+}
+
+/* 主题 2：Apple Tahoe 冰川极光 (Glacier Blue & Teal) */
+.apple-tahoe-theme, .mhw-theme {
+  --g-bg: #070e17;
+  --g-bg-canvas: #04080e;
+  --g-panel: rgba(14, 28, 44, 0.72);
+  --g-panel-elevated: rgba(20, 40, 62, 0.82);
+  --g-panel-subtle: rgba(100, 210, 255, 0.05);
+  --g-border: rgba(100, 210, 255, 0.15);
+  --g-border-strong: rgba(100, 210, 255, 0.28);
+  --g-accent: #64D2FF;
+  --g-accent-gradient: linear-gradient(135deg, #64D2FF, #0A84FF);
+  --g-urgent: #FF453A;
+  --g-urgent-gradient: linear-gradient(135deg, #FF453A, #FF9F0A);
+  --g-gold: #FFD60A;
+  --g-success: #30D158;
+  --g-text-primary: #FFFFFF;
+  --g-text-secondary: rgba(210, 230, 250, 0.70);
+  --g-text-tertiary: rgba(210, 230, 250, 0.40);
+  --g-blur: blur(30px) saturate(200%);
+}
+
+/* 主题 3：Apple Studio 纯黑极简 (M3 Pro Space Black) */
+.apple-space-theme, .maple-theme {
+  --g-bg: #000000;
+  --g-bg-canvas: #050505;
+  --g-panel: rgba(24, 24, 27, 0.75);
+  --g-panel-elevated: rgba(39, 39, 42, 0.85);
+  --g-panel-subtle: rgba(255, 255, 255, 0.06);
+  --g-border: rgba(255, 255, 255, 0.12);
+  --g-border-strong: rgba(255, 255, 255, 0.22);
+  --g-accent: #BF5AF2;
+  --g-accent-gradient: linear-gradient(135deg, #BF5AF2, #5E5CE6);
+  --g-urgent: #FF375F;
+  --g-urgent-gradient: linear-gradient(135deg, #FF375F, #FF453A);
+  --g-gold: #FFD60A;
+  --g-success: #32D74B;
+  --g-text-primary: #FFFFFF;
+  --g-text-secondary: rgba(255, 255, 255, 0.65);
+  --g-text-tertiary: rgba(255, 255, 255, 0.38);
+  --g-blur: blur(32px) saturate(180%);
+}
+
+/* ==================== 苹果毛玻璃与高光边缘材质 (Vibrancy & Frosted Glass) ==================== */
+.apple-glass {
+  background: var(--g-panel);
+  backdrop-filter: var(--g-blur);
+  -webkit-backdrop-filter: var(--g-blur);
+  border: 1px solid var(--g-border);
+  box-shadow: 
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+    0 12px 36px -6px rgba(0, 0, 0, 0.5),
+    0 2px 8px -2px rgba(0, 0, 0, 0.3);
+}
+
+.apple-glass-card {
+  background: var(--g-panel);
+  backdrop-filter: var(--g-blur);
+  -webkit-backdrop-filter: var(--g-blur);
+  border: 1px solid var(--g-border);
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 1px 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 16px 40px -8px rgba(0, 0, 0, 0.45);
+  transition: transform 0.25s var(--apple-ease), box-shadow 0.25s var(--apple-ease), border-color 0.25s ease;
+}
+
+.apple-glass-card:hover {
+  border-color: var(--g-border-strong);
+  box-shadow: 
+    0 1px 1px 0 rgba(255, 255, 255, 0.12) inset,
+    0 20px 48px -6px rgba(0, 0, 0, 0.55);
+}
+
+/* 顶部高光弧线 (Apple Specular Rim Highlight) */
+.apple-glass-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  pointer-events: none;
+}
+
+/* ==================== 苹果视窗红黄绿交通灯 (macOS Traffic Lights) ==================== */
+.traffic-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, filter 0.15s ease;
+  cursor: pointer;
+}
+
+.traffic-dot:hover {
+  filter: brightness(1.15);
+  transform: scale(1.08);
+}
+
+.traffic-dot:active {
+  transform: scale(0.92);
+}
+
+.traffic-dot-close {
+  background: #FF5F56;
+  border: 0.5px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 2px rgba(255, 95, 86, 0.35);
+}
+
+.traffic-dot-min {
+  background: #FFBD2E;
+  border: 0.5px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 2px rgba(255, 189, 46, 0.35);
+}
+
+.traffic-dot-max {
+  background: #27C93F;
+  border: 0.5px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 2px rgba(39, 201, 63, 0.35);
+}
+
+/* ==================== 苹果分段控制器 (Segmented Controls) ==================== */
+.apple-segmented-group {
+  background: rgba(0, 0, 0, 0.35);
+  padding: 3px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: inline-flex;
+  gap: 2px;
+}
+
+.apple-segment-btn {
+  padding: 4px 12px;
+  border-radius: 9px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--g-text-secondary);
+  transition: all 0.2s var(--apple-ease);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}
+
+.apple-segment-btn:hover {
+  color: #FFFFFF;
+}
+
+.apple-segment-btn.active {
+  background: rgba(255, 255, 255, 0.14);
+  color: #FFFFFF;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25), 0 0 0 0.5px rgba(255, 255, 255, 0.15) inset;
+}
+
+/* ==================== Apple Intelligence 炫彩呼吸光环 (Siri Iridescent Aura) ==================== */
+@keyframes appleIntelligenceBreath {
+  0%, 100% {
+    filter: drop-shadow(0 0 16px rgba(191, 90, 242, 0.3)) drop-shadow(0 0 28px rgba(10, 132, 255, 0.2));
+  }
+  50% {
+    filter: drop-shadow(0 0 24px rgba(255, 55, 95, 0.4)) drop-shadow(0 0 36px rgba(191, 90, 242, 0.35));
+  }
+}
+
+.apple-intelligence-card {
+  position: relative;
+  border-radius: 20px;
+  background: linear-gradient(145deg, rgba(25, 20, 36, 0.8), rgba(12, 16, 28, 0.88));
+  backdrop-filter: var(--g-blur);
+  -webkit-backdrop-filter: var(--g-blur);
+}
+
+.apple-intelligence-card::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 21px;
+  padding: 1.5px;
+  background: linear-gradient(135deg, 
+    rgba(255, 55, 95, 0.6), 
+    rgba(191, 90, 242, 0.7), 
+    rgba(10, 132, 255, 0.7), 
+    rgba(50, 215, 75, 0.5)
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: appleIntelligenceBreath 6s ease-in-out infinite;
+}
+
+/* ==================== 苹果胶囊按钮与微触觉 (Capsule Buttons & Interactive Micro-Feedback) ==================== */
+.apple-capsule-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 9999px;
+  font-family: var(--apple-font);
+  font-weight: 600;
+  transition: all 0.2s var(--apple-ease);
+  cursor: pointer;
+  user-select: none;
+}
+
+.apple-capsule-btn:active {
+  transform: scale(0.97);
+}
+
+.apple-btn-primary {
+  background: var(--g-accent-gradient);
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(10, 132, 255, 0.35), 0 1px 1px rgba(255, 255, 255, 0.2) inset;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.apple-btn-primary:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 6px 18px rgba(10, 132, 255, 0.45);
+}
+
+.apple-btn-success {
+  background: linear-gradient(135deg, #30D158, #34C759);
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(48, 209, 88, 0.35), 0 1px 1px rgba(255, 255, 255, 0.25) inset;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.apple-btn-success:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 6px 20px rgba(48, 209, 88, 0.45);
+}
+
+.apple-btn-danger {
+  background: var(--g-urgent-gradient);
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(255, 69, 58, 0.35), 0 1px 1px rgba(255, 255, 255, 0.2) inset;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.apple-btn-subtle {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--g-text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.apple-btn-subtle:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* ==================== 苹果控制中心风格技能方块 (Control Center Action Tiles) ==================== */
+.apple-action-tile {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 16px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: all 0.2s var(--apple-ease);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.apple-action-tile:hover {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1.5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.apple-action-tile:active {
+  transform: scale(0.96);
+}
+
+/* ==================== BOSS 优雅破防动效与伤害飘字 (Apple-Grade Feedback) ==================== */
+@keyframes appleShake {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-3px, 1px); }
+  40% { transform: translate(3px, -1px); }
+  60% { transform: translate(-2px, -1px); }
+  80% { transform: translate(2px, 2px); }
+  100% { transform: translate(0, 0); }
+}
+
+.boss-shake {
+  animation: appleShake 0.35s var(--apple-ease);
+}
+
+@keyframes appleFloatDamage {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -20%) scale(0.8);
+    filter: blur(4px);
+  }
+  25% {
+    opacity: 1;
+    transform: translate(-50%, -60%) scale(1.2);
+    filter: blur(0px);
+  }
+  75% {
+    opacity: 1;
+    transform: translate(-50%, -110%) scale(1.05);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -150%) scale(0.9);
+    filter: blur(2px);
+  }
+}
+
+.floating-damage {
+  animation: appleFloatDamage 1.2s var(--apple-ease) forwards;
+  font-family: var(--apple-font);
+  font-weight: 800;
+  text-shadow: 0 0 16px rgba(255, 69, 58, 0.8), 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* ==================== 苹果系统极细平滑滚动条 (Apple Precision Scrollbar) ==================== */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 9999px;
+  transition: background 0.2s ease;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.32);
+}
+
+/* 视窗拖拽 */
+.window-drag-region {
+  -webkit-app-region: drag;
+}
+.window-no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/* ==================== 桌面心流伴随结界 (Focus Field Breathing Aura) ==================== */
+@keyframes focusBreathingBlue {
+  0%, 100% {
+    box-shadow: 0 0 18px rgba(10, 132, 255, 0.28), 0 0 0 1px rgba(10, 132, 255, 0.3) inset, 0 12px 36px rgba(0, 0, 0, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(10, 132, 255, 0.52), 0 0 0 1.5px rgba(10, 132, 255, 0.55) inset, 0 16px 44px rgba(0, 0, 0, 0.7);
+  }
+}
+
+@keyframes focusBreathingGreen {
+  0%, 100% {
+    box-shadow: 0 0 22px rgba(48, 209, 88, 0.32), 0 0 0 1px rgba(48, 209, 88, 0.38) inset, 0 12px 36px rgba(0, 0, 0, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 36px rgba(48, 209, 88, 0.62), 0 0 0 1.5px rgba(48, 209, 88, 0.65) inset, 0 16px 44px rgba(0, 0, 0, 0.7);
+  }
+}
+
+@keyframes focusBreathingGold {
+  0%, 100% {
+    box-shadow: 0 0 26px rgba(255, 214, 10, 0.38), 0 0 0 1px rgba(255, 214, 10, 0.45) inset, 0 12px 36px rgba(0, 0, 0, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 44px rgba(255, 214, 10, 0.75), 0 0 0 2px rgba(255, 214, 10, 0.8) inset, 0 18px 50px rgba(0, 0, 0, 0.75);
+  }
+}
+
+.focus-aura-tier-1 {
+  animation: focusBreathingBlue 3.2s ease-in-out infinite;
+}
+
+.focus-aura-tier-2 {
+  animation: focusBreathingGreen 2.5s ease-in-out infinite;
+}
+
+.focus-aura-tier-3 {
+  animation: focusBreathingGold 1.8s ease-in-out infinite;
+}

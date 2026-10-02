@@ -1,0 +1,105 @@
+<!-- components/state-cockpit/state-cockpit.wxml -->
+<view class="cockpit-container glass-card shadow-sm game-quest-card">
+  <!-- 游戏化战术头部：战役状态 + 认知等级 + 提炼操作 -->
+  <view class="cockpit-header">
+    <view class="header-left" bindtap="toggleExpand">
+      <view class="pulse-dot"></view>
+      <text class="quest-category-badge">👑 主线战役</text>
+      <text class="header-title">任务战术看板</text>
+      <text class="collapse-icon">{{isExpanded ? '▲' : '▼'}}</text>
+    </view>
+    <view class="header-right">
+      <button 
+        class="btn-sync {{isSyncing ? 'btn-syncing' : ''}}" 
+        hover-class="tap-active" 
+        bindtap="handleAiSync"
+        disabled="{{isSyncing}}"
+      >
+        <text class="sync-icon">{{isSyncing ? '⌛' : '⚡'}}</text>
+        <text class="sync-text">{{isSyncing ? '推演中...' : '战术推演'}}</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- 认知进度条 (育碧/命运2风格：探索收敛度 ΔQ 与猎人段位) -->
+  <view class="quest-progress-bar-row" wx:if="{{isExpanded}}">
+    <view class="level-badge">
+      <text class="level-icon">⭐</text>
+      <text class="level-text">Lv.14 解构学者</text>
+    </view>
+    <view class="progress-box">
+      <view class="progress-track">
+        <view class="progress-fill" style="width: 58%;"></view>
+      </view>
+      <text class="progress-label">核心问题收敛度: 58%</text>
+    </view>
+  </view>
+
+  <!-- 折叠时的精炼单行概览 (WoW 风格 HUD) -->
+  <view class="cockpit-summary" wx:if="{{!isExpanded}}" bindtap="toggleExpand">
+    <view class="summary-item">
+      <text class="summary-label">👑 主线目标:</text>
+      <text class="summary-val text-ellipsis">{{cockpit.core_question || '未确立主线目标'}}</text>
+    </view>
+    <view class="summary-item">
+      <text class="summary-label">📌 当前悬赏:</text>
+      <text class="summary-val text-ellipsis color-evi">{{cockpit.next_action || '未指定最小行动'}}</text>
+    </view>
+  </view>
+
+  <!-- 展开时的完整 4 大游戏化任务板块 -->
+  <view class="cockpit-body" wx:if="{{isExpanded}}">
+    
+    <!-- 👑 核心主线任务 Qt (魔兽世界/命运2 主线战役) -->
+    <view class="anchor-box box-question">
+      <view class="anchor-tag">
+        <text class="anchor-icon">👑</text>
+        <text class="anchor-name">主线核心目标 (Qt)</text>
+        <text class="tag-status">● 进行中</text>
+      </view>
+      <text class="anchor-content">{{cockpit.core_question || '尚未明确核心目标。点击下方录入或使用战术推演。'}}</text>
+    </view>
+
+    <!-- 🔥 紧急突破任务 / 瓶颈 BOSS Bt (怪猎紧急任务 / 育碧目标卡) -->
+    <view class="anchor-box box-bottleneck">
+      <view class="anchor-tag">
+        <text class="anchor-icon">🔥</text>
+        <text class="anchor-name">紧急突破卡点 (Key Quest · Bt)</text>
+        <text class="tag-alert">BOSS 瓶颈</text>
+      </view>
+      <text class="anchor-content color-bot">{{cockpit.current_bottleneck || '未定位到明确瓶颈'}}</text>
+      <text class="bottleneck-subtip">击破提示：集中火力消除该单一卡点，防止做无关忙碌 (Activity ≠ Progress)</text>
+    </view>
+
+    <!-- 📌 常驻最小行动悬赏 At (命运2 赏金单 / WoW 任务清单步骤) -->
+    <view class="anchor-box box-action">
+      <view class="anchor-tag">
+        <text class="anchor-icon">📌</text>
+        <text class="anchor-name">即刻行动悬赏 (Bounty · At)</text>
+        <text class="tag-objective">[0/1 最小验证]</text>
+      </view>
+      <text class="anchor-content color-evi">{{cockpit.next_action || '未设定最小实验或行动'}}</text>
+    </view>
+
+    <!-- 💡 未解调查线索雷达 Ut (冒险岛/彩虹岛 任务线索簿) -->
+    <view class="anchor-box box-unknowns" wx:if="{{cockpit.unknowns && cockpit.unknowns.length > 0}}">
+      <view class="anchor-tag">
+        <text class="anchor-icon">💡</text>
+        <text class="anchor-name">未解调查线索 (Clues · Ut)</text>
+        <text class="tag-count">{{cockpit.unknowns.length}} 条线索</text>
+      </view>
+      <view class="unknowns-list">
+        <view class="unknown-item" wx:for="{{cockpit.unknowns}}" wx:key="index">
+          <text class="bullet">›</text>
+          <text class="unknown-text">{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部状态元信息 -->
+    <view class="cockpit-footer">
+      <text class="time-tip">战术同步: {{formatSyncTime}}</text>
+      <text class="edit-btn" bindtap="handleManualEdit">修正目标 ✎</text>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>探索导航系统 · 战术指挥大屏 (War Room)</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <link rel="stylesheet" href="styles/main.css">
+  <style>
+    body {
+      font-family: var(--apple-font);
+      background-color: var(--g-bg);
+      color: var(--g-text-primary);
+    }
+  </style>
+</head>
+<body id="themeBody" class="apple-dark-theme min-h-screen flex flex-col font-sans select-none antialiased relative overflow-x-hidden transition-colors duration-500">
+
+  <!-- 全局粒子特效与战争迷雾 Canvas (Apple Ambient Glow & Dust Motes) -->
+  <canvas id="fxCanvas" class="fixed inset-0 pointer-events-none z-40"></canvas>
+
+  <!-- ==================== macOS 原生风格毛玻璃窗口标题栏 (macOS Unified Toolbar) ==================== -->
+  <div class="window-drag-region h-11 bg-black/40 border-b border-white/10 backdrop-blur-xl flex items-center justify-between px-4 text-xs flex-shrink-0 z-50">
+    
+    <!-- 左侧：macOS 经典红黄绿交通灯 (Traffic Lights) -->
+    <div class="window-no-drag flex items-center gap-2">
+      <div onclick="window.electronAPI.closeWindow()" class="traffic-dot traffic-dot-close" title="关闭窗口"></div>
+      <div onclick="window.electronAPI.minimizeWindow()" class="traffic-dot traffic-dot-min" title="最小化窗口"></div>
+      <div onclick="window.electronAPI.maximizeWindow()" class="traffic-dot traffic-dot-max" title="缩放/全屏"></div>
+      <div class="w-px h-3.5 bg-white/10 ml-2 mr-1"></div>
+      <span class="text-white/80 font-semibold tracking-tight text-[11px] flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
+        <span>探索工作台</span>
+      </span>
+      <span class="text-white/35 font-mono text-[10px]">v1.2 · Apple Pro Edition</span>
+    </div>
+
+    <!-- 中间：战役主航标提示 -->
+    <div class="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] text-white/70">
+      <span class="text-sky-400">🧭</span>
+      <span id="navToolbarTitle" class="font-medium truncate max-w-[280px]">EEG 脑电 × 冥想机制探测</span>
+    </div>
+    
+    <!-- 右侧：快捷操作区 -->
+    <div class="window-no-drag flex items-center gap-2">
+      <!-- Apple Spotlight 全局指令面板唤起 -->
+      <button onclick="commandPalette.open()" class="apple-capsule-btn px-2.5 py-1 bg-white/10 hover:bg-white/15 border border-white/15 text-white/75 hover:text-white text-[11px] transition" title="按 Ctrl+K 打开全局指令面板">
+        <span>🔍 快捷指令</span>
+        <span class="text-[9px] text-white/40 font-mono">⌘K</span>
+      </button>
+
+      <!-- 认知圣物库按钮 -->
+      <button onclick="relicEngine.openVaultModal()" class="apple-capsule-btn px-2.5 py-1 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-400/30 text-amber-300 text-[11px] transition" title="查看击溃BOSS获得的探索战利品与神器">
+        <span>💎 圣物库</span>
+      </button>
+
+      <button onclick="collapseToFocusCard()" class="apple-capsule-btn px-2.5 py-1 bg-sky-500/20 hover:bg-sky-500/30 border border-sky-400/30 text-sky-200 hover:text-white text-[11px] transition" title="收起至极简聚焦卡片 (Alt+F)">
+        <span>🎯 极简聚焦卡片</span>
+        <span class="text-[9px] text-sky-300/70 font-mono">Alt+F</span>
+      </button>
+
+      <button onclick="window.electronAPI.toggleSidebar()" class="apple-capsule-btn px-2.5 py-1 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-400/30 text-emerald-200 hover:text-white text-[11px] transition" title="呼出 Antigravity 贴附侧边栏 (Alt+S)">
+        <span>📑 贴附侧边栏</span>
+        <span class="text-[9px] text-emerald-300/70 font-mono">Alt+S</span>
+      </button>
+
+      <button onclick="openSettingsModal()" class="w-7 h-7 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 flex items-center justify-center text-white/70 hover:text-white transition" title="配置大模型 API Key">
+        ⚙️
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== 战术总览顶栏 (Apple Pro Director HUD) ==================== -->
+  <header class="p-4 mx-4 mt-3 rounded-2xl apple-glass-card relative overflow-hidden flex-shrink-0">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      
+      <!-- 课题信息与切换 (Apple Squircle Icon & Title) -->
+      <div class="flex items-center gap-3.5">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-400/25 to-indigo-600/35 border border-white/20 flex items-center justify-center text-2xl shadow-lg cursor-pointer hover:scale-105 active:scale-95 transition" onclick="openProjectModal()" title="切换或新建探索课题">
+          🧭
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] uppercase tracking-wider text-sky-400 font-bold px-2.5 py-0.5 rounded-full bg-sky-500/15 border border-sky-400/25">主线战役 · 探索中</span>
+            <span class="text-xs text-white/50 font-mono" id="campaignChapterLabel">第 2 阶段 · 排除伪迹与对照</span>
+          </div>
+          <h1 class="text-lg md:text-xl font-black text-white flex items-center gap-2 mt-1 cursor-pointer hover:text-sky-300 transition" id="campaignTitle" onclick="openProjectModal()">
+            EEG 脑电 × 冥想神经机制探测 ▾
+          </h1>
+        </div>
+      </div>
+
+      <!-- 核心指标栏 (Apple Fitness / Watch Ring 风格度量 Pod) -->
+      <div class="flex items-center gap-4 px-4 py-2 rounded-2xl bg-black/40 border border-white/10 shadow-inner">
+        
+        <!-- 探索阶段与认知状态 -->
+        <div class="text-center cursor-pointer hover:opacity-85 transition group" onclick="skillTree.openModal()" title="点击查看认知胜利殿堂与特性赋能">
+          <div class="text-[10px] uppercase text-white/50 flex items-center justify-center gap-1">
+            <span>探索阶段</span>
+            <span class="text-[9px] text-amber-400 font-mono group-hover:underline">🏆 阶段</span>
+          </div>
+          <div class="text-sm md:text-base font-extrabold text-amber-400 flex items-center justify-center gap-1 mt-0.5" id="playerRank">
+            <span>Stage 2 · 因果收敛</span>
+          </div>
+        </div>
+
+        <div class="w-px h-8 bg-white/10"></div>
+
+        <!-- 已验证微动作 Pod (Verified Micro-Actions) -->
+        <div class="text-center cursor-pointer hover:opacity-85 transition" onclick="commandPalette.open()" title="已完成并验证的微物理动作步骤">
+          <div class="text-[10px] uppercase text-emerald-400 font-bold flex items-center justify-center gap-1">
+            <span>✓</span> 微动作进展
+          </div>
+          <div class="text-sm font-black text-emerald-300 font-mono mt-0.5" id="verifiedStepsLabel">
+            已验证 0 步
+          </div>
+        </div>
+
+        <div class="w-px h-8 bg-white/10"></div>
+
+        <!-- 认知收敛率 ΔQt (Apple Pill Gauge) -->
+        <div class="text-center min-w-[120px]">
+          <div class="flex justify-between text-[10px] mb-1 font-mono">
+            <span class="text-white/50 font-sans">认知收敛 (ΔQt)</span>
+            <span class="text-sky-400 font-bold" id="convergenceLabel">58%</span>
+          </div>
+          <div class="w-full bg-white/10 h-2 rounded-full overflow-hidden p-0.5 border border-white/5">
+            <div id="convergenceBar" class="bg-gradient-to-r from-sky-400 via-indigo-400 to-purple-500 h-full rounded-full transition-all duration-700" style="width: 58%"></div>
+          </div>
+        </div>
+
+        <div class="w-px h-8 bg-white/10"></div>
+
+        <!-- 可能性空间 ΔPt -->
+        <div class="text-center">
+          <div class="text-[10px] uppercase text-white/50">可能性空间 (ΔPt)</div>
+          <div class="text-sm font-bold text-emerald-400 font-mono mt-0.5" id="possibilityLabel">12 路径</div>
+        </div>
+      </div>
+
+      <!-- 苹果视觉风格切换器 (Apple Segmented Style Switcher) -->
+      <div class="apple-segmented-group">
+        <button onclick="setGameTheme('apple-dark-theme')" id="theme-btn-dark" class="apple-segment-btn active" title="macOS Sequoia 深空黑曜">
+          🌌 深空黑曜
+        </button>
+        <button onclick="setGameTheme('apple-tahoe-theme')" id="theme-btn-tahoe" class="apple-segment-btn" title="Apple Tahoe 冰川极光">
+          ❄️ 冰川极光
+        </button>
+        <button onclick="setGameTheme('apple-space-theme')" id="theme-btn-space" class="apple-segment-btn" title="Apple Studio 纯黑极简">
+          ⚡ 纯黑极简
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ==================== 主体 3 栏内容网格 (Main Content Grid) ==================== -->
+  <main class="grid grid-cols-1 lg:grid-cols-12 gap-4 p-4 flex-1 overflow-hidden">
+    
+    <!-- ==================== 左栏：瓶颈BOSS + 极简情报录入 + 过滤器 (3列) ==================== -->
+    <section class="lg:col-span-3 flex flex-col gap-3.5 overflow-y-auto pr-1">
+      
+      <!-- 守门瓶颈 BOSS 战斗卡 (visionOS Frosted Ruby Threat Card) -->
+      <div id="bossBattleCard" class="apple-glass-card p-4 border border-rose-500/35 relative overflow-hidden transition-all duration-300" style="background: linear-gradient(165deg, rgba(244, 63, 94, 0.12), rgba(15, 23, 42, 0.75));">
+        
+        <div class="flex items-center justify-between mb-2.5">
+          <div class="flex items-center gap-1.5">
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-400/30">
+              <span>🔥 守门瓶颈</span>
+              <span class="text-[9px] bg-black/40 px-1 py-0.2 rounded font-mono">BOSS</span>
+            </span>
+            <span id="bossStatusBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-600 text-white">🔥 狂暴守门中</span>
+          </div>
+          <span class="text-[10px] text-amber-400 font-mono tracking-wider">★★★ 致命</span>
+        </div>
+
+        <h2 class="text-sm font-bold text-white leading-snug tracking-tight" id="bossTitle">
+          击破「前额肌电与微眼动伪迹」
+        </h2>
+
+        <!-- BOSS HP 能量槽 (Apple Pill Health Gauge) -->
+        <div class="mt-2.5 bg-black/40 p-2 rounded-xl border border-white/10">
+          <div class="flex justify-between items-center text-[10px] mb-1 font-mono">
+            <span class="text-white/60 font-semibold">首领韧性 HP</span>
+            <span class="text-rose-400 font-bold" id="bossHpText">HP 65 / 100 (65%)</span>
+          </div>
+          <div class="w-full bg-slate-900/80 h-2.5 rounded-full overflow-hidden p-0.5 border border-white/5">
+            <div id="bossHpBar" class="bg-gradient-to-r from-rose-500 via-rose-400 to-amber-400 h-full rounded-full transition-all duration-700" style="width: 65%;"></div>
+          </div>
+        </div>
+
+        <p class="text-xs text-white/70 mt-2 line-clamp-2 leading-relaxed" id="bossContent">
+          消费级脑电仪的 Theta 波动 70% 疑似为眼球微颤伪迹，当前阻碍推进的单一核心卡点。
+        </p>
+
+        <!-- BOSS 弱点属性胶囊 (Weakness Badges) -->
+        <div class="mt-3 pt-2.5 border-t border-white/10">
+          <div class="text-[10px] text-white/50 mb-1.5 flex items-center justify-between">
+            <span>弱点属性判定 (Weaknesses)</span>
+            <span class="text-amber-400 font-mono text-[9px]">命中触发暴击</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold text-amber-300 border border-amber-500/30 bg-amber-500/10" title="遮光眼罩双盲实测">⚡ 物理对照: 2.0x</span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold text-sky-300 border border-sky-500/30 bg-sky-500/10" title="4-8Hz 衰减率统计">📊 频段方差: 1.5x</span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold text-emerald-300 border border-emerald-500/30 bg-emerald-500/10" title="采集 10 组眼动基线">🔬 实测证物: 2.5x</span>
+          </div>
+        </div>
+
+        <div class="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px]">
+          <span class="text-white/60">击破收益: <span class="text-amber-400 font-bold font-mono">+25% 收敛度</span></span>
+          <button onclick="castTacticalSpell('attribution')" class="apple-capsule-btn px-3 py-1 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs shadow-md transition">
+            <span>🎯 弱点排查</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 快速情报录入面板 (Apple Notes / Dynamic Island Style Dispatcher) -->
+      <div class="apple-glass-card p-3.5">
+        <div class="text-xs font-bold text-white mb-2 flex items-center justify-between">
+          <span class="flex items-center gap-1.5"><span>⚡</span> 录入新情报线索</span>
+          <span class="text-[10px] text-white/40 font-mono">⌘Enter 沉淀</span>
+        </div>
+
+        <!-- 5 种分类轻量胶囊按钮 -->
+        <div class="grid grid-cols-5 gap-1 mb-2.5">
+          <button onclick="setNewIntelType('observation')" id="tab-obs" class="py-1 text-[11px] font-bold rounded-lg border border-sky-400/40 bg-sky-500/20 text-sky-300 transition">👁️观察</button>
+          <button onclick="setNewIntelType('question')" id="tab-que" class="py-1 text-[11px] font-medium rounded-lg border border-white/10 bg-white/5 text-white/60 hover:text-white transition">❓疑问</button>
+          <button onclick="setNewIntelType('hypothesis')" id="tab-hyp" class="py-1 text-[11px] font-medium rounded-lg border border-white/10 bg-white/5 text-white/60 hover:text-white transition">💡假说</button>
+          <button onclick="setNewIntelType('evidence')" id="tab-evi" class="py-1 text-[11px] font-medium rounded-lg border border-white/10 bg-white/5 text-white/60 hover:text-white transition">🔬证物</button>
+          <button onclick="setNewIntelType('bottleneck')" id="tab-bot" class="py-1 text-[11px] font-medium rounded-lg border border-white/10 bg-white/5 text-white/60 hover:text-white transition">🚧瓶颈</button>
+        </div>
+
+        <textarea id="quickInputArea" rows="2" class="w-full bg-black/40 border border-white/15 rounded-xl p-2.5 text-xs text-white placeholder-white/30 focus:outline-none focus:border-sky-500 transition resize-none" placeholder="记录新目击到的现象、实验数据或突发灵感..."></textarea>
+        
+        <button id="btnDispatchIntel" onclick="dispatchIntel()" class="apple-capsule-btn apple-btn-primary w-full mt-2.5 py-1.5 text-xs font-bold shadow-md">
+          <span>🚀 沉淀到线索网络</span>
+        </button>
+      </div>
+
+      <!-- 线索分类过滤器 (Apple Settings / Sidebar List Style) -->
+      <div class="apple-glass-card p-3">
+        <div class="text-[11px] font-bold uppercase tracking-wider text-white/40 px-1 mb-1.5 flex justify-between">
+          <span>线索分类过滤</span>
+          <span id="clueTotalBadge" class="font-mono text-white/50">5 条</span>
+        </div>
+        <div class="space-y-1" id="filterBtnGroup">
+          <button onclick="filterClues('all')" id="filter-all" class="w-full text-left px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-white/10 border border-white/15 text-sky-300 flex justify-between transition">
+            <span>📂 全部线索</span>
+            <span class="font-mono text-white/40" id="cnt-all">5</span>
+          </button>
+          <button onclick="filterClues('observation')" id="filter-obs" class="w-full text-left px-2.5 py-1.5 rounded-xl text-xs font-medium text-white/70 hover:bg-white/5 flex justify-between transition">
+            <span><span class="text-sky-400">👁️</span> 观察记录</span>
+            <span class="font-mono text-white/40" id="cnt-obs">2</span>
+          </button>
+          <button onclick="filterClues('question')" id="filter-que" class="w-full text-left px-2.5 py-1.5 rounded-xl text-xs font-medium text-white/70 hover:bg-white/5 flex justify-between transition">
+            <span><span class="text-purple-400">❓</span> 探究线索</span>
+            <span class="font-mono text-white/40" id="cnt-que">1</span>
+          </button>
+          <button onclick="filterClues('hypothesis')" id="filter-hyp" class="w-full text-left px-2.5 py-1.5 rounded-xl text-xs font-medium text-white/70 hover:bg-white/5 flex justify-between transition">
+            <span><span class="text-amber-400">💡</span> 机制假说</span>
+            <span class="font-mono text-white/40" id="cnt-hyp">1</span>
+          </button>
+          <button onclick="filterClues('evidence')" id="filter-evi" class="w-full text-left px-2.5 py-1.5 rounded-xl text-xs font-medium text-white/70 hover:bg-white/5 flex justify-between transition">
+            <span><span class="text-emerald-400">🔬</span> 实测与证物</span>
+            <span class="font-mono text-white/40" id="cnt-evi">1</span>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ==================== 中栏：核心主线任务 + 育碧式线索图谱 (6列) ==================== -->
+    <section class="lg:col-span-6 flex flex-col gap-3.5 overflow-y-auto pr-1">
+      
+      <!-- 主线核心任务面板 (Apple Pro Quest Card) -->
+      <div class="apple-glass-card p-4">
+        <div class="flex items-center justify-between border-b border-white/10 pb-2.5 mb-2.5">
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">
+              👑 核心主线目标 (Qt)
+            </span>
+            <span class="text-xs text-white/40 font-mono">阶段 2 / 5</span>
+          </div>
+          <span class="text-xs text-emerald-400 font-bold flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>主线进行中</span>
+          </span>
+        </div>
+
+        <h2 class="text-base md:text-lg font-black text-white leading-snug tracking-tight" id="questCoreQuestion">
+          操作性定义「冥想状态」的神经电生理特征
+        </h2>
+        
+        <!-- 认知底线 Callout Box -->
+        <div class="mt-2.5 p-3 rounded-xl bg-sky-500/10 border-l-2 border-sky-400 text-xs text-white/80 leading-relaxed">
+          <span class="text-sky-300 font-bold">【当前认知底线】：</span>在未严格隔离眼动与前额微肌肉震颤前，禁止草率训练分类模型。
+        </div>
+
+        <!-- 通关目标清单 (Apple Reminders Style Checklist) -->
+        <div class="mt-3 bg-black/40 border border-white/10 rounded-xl p-3 space-y-2">
+          <div class="flex items-center justify-between text-[11px] font-bold uppercase text-white/40">
+            <span>通关目标清单 (Objectives)</span>
+            <span class="text-sky-400 font-mono">2 / 3 完成</span>
+          </div>
+
+          <div class="flex items-start gap-2.5 text-xs text-white/40">
+            <span class="text-emerald-400 font-bold">✓</span>
+            <span class="line-through">文献基线查阅：12 篇顶刊关于冥想状态 EEG 标签规范</span>
+          </div>
+
+          <div class="flex items-start gap-2.5 text-xs text-sky-100 bg-sky-950/40 p-2.5 rounded-xl border border-sky-500/30">
+            <span class="text-sky-400 font-bold">⏳</span>
+            <div class="flex-1">
+              <span class="font-semibold">执行眼罩 A/B 对照实测 (比较 4-8Hz 频段能量方差衰减率)</span>
+              <div class="mt-1.5 flex items-center gap-2">
+                <div class="flex-1 bg-white/10 h-1.5 rounded-full overflow-hidden">
+                  <div id="questActionProgress" class="bg-gradient-to-r from-sky-400 to-indigo-500 h-full transition-all duration-500" style="width: 70%"></div>
+                </div>
+                <span id="questActionProgressText" class="text-[10px] text-sky-300 font-mono">70%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-2.5 text-xs text-white/50">
+            <span>○</span>
+            <span>失败归因排查：验证低成本物理眼罩能否取代多通道独立成分分析 (ICA)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 育碧式/真探线索调查看板 (Apple Freeform Style Clue Canvas & Cards) -->
+      <div class="apple-glass-card p-4 flex-1 flex flex-col min-h-[460px]">
+        
+        <div class="flex items-center justify-between mb-3 flex-shrink-0">
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-bold text-white tracking-tight">线索证据调查网 (Intel Graph)</span>
+            <span class="text-xs text-sky-400 font-mono px-2 py-0.5 rounded-full bg-sky-500/10 border border-sky-400/20" id="clueStreamCount">5 节点</span>
+          </div>
+          
+          <!-- 苹果胶囊分段视图切换器 (Segmented View Controller) -->
+          <div class="apple-segmented-group">
+            <button id="btnViewCanvas" onclick="switchClueView('canvas')" class="apple-segment-btn active">
+              🗺️ 调查图谱
+            </button>
+            <button id="btnViewCards" onclick="switchClueView('cards')" class="apple-segment-btn">
+              📋 档案卡片
+            </button>
+          </div>
+        </div>
+
+        <!-- 视图 1：交互式 2D 育碧调查墙 Canvas (Apple Dot Matrix Canvas) -->
+        <div id="clueCanvasContainer" class="relative w-full flex-1 min-h-[420px] rounded-2xl border border-white/10 bg-[#06080e] overflow-hidden">
+          <canvas id="clueCanvas" class="w-full h-full block cursor-default"></canvas>
+          
+          <!-- 画布操作浮动工具栏 (Apple Translucent Floating Controls) -->
+          <div class="absolute top-3 right-3 flex items-center gap-1.5 z-10">
+            <!-- 关键词过滤 -->
+            <input type="text" oninput="window.clueCanvas.setSearchFilter(this.value)" placeholder="搜索节点..." class="bg-black/60 border border-white/15 rounded-full px-2.5 py-1 text-[11px] text-white placeholder-white/30 focus:outline-none focus:border-sky-400 w-24 focus:w-36 transition-all backdrop-blur-md">
+
+            <!-- 智能重排 -->
+            <button onclick="window.clueCanvas.autoLayoutDAG()" class="apple-capsule-btn px-2.5 py-1 bg-black/60 hover:bg-black/80 text-[11px] text-sky-300 border border-white/15 backdrop-blur-md transition" title="智能按照因果层级自动重排">
+              ⟳ 智能重排
+            </button>
+
+            <!-- 复位 -->
+            <button onclick="resetCanvasView()" class="apple-capsule-btn px-2.5 py-1 bg-black/60 hover:bg-black/80 text-[11px] text-white/80 border border-white/15 backdrop-blur-md transition" title="重置视角">
+              ⟲ 复位
+            </button>
+
+            <span class="px-2.5 py-1 rounded-full bg-black/60 text-[10px] text-white/40 border border-white/15 backdrop-blur-md font-mono hidden sm:inline-block">
+              滚轮缩放 / 拖拽
+            </span>
+          </div>
+
+          <!-- 画布底部图例 (Apple Translucent Legend Pod) -->
+          <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between px-3.5 py-2 rounded-xl bg-black/75 border border-white/15 text-[10px] backdrop-blur-lg z-10">
+            <div class="flex items-center gap-3">
+              <span class="flex items-center gap-1 text-sky-400 font-medium"><span>👁️</span> 观察</span>
+              <span class="flex items-center gap-1 text-purple-400 font-medium"><span>❓</span> 疑问</span>
+              <span class="flex items-center gap-1 text-amber-400 font-medium"><span>💡</span> 假说</span>
+              <span class="flex items-center gap-1 text-emerald-400 font-medium"><span>🔬</span> 证物</span>
+              <span class="flex items-center gap-1 text-rose-400 font-medium"><span>🔥</span> 守门瓶颈</span>
+            </div>
+            <span class="text-white/40">点击节点施展战术透镜</span>
+          </div>
+        </div>
+
+        <!-- 视图 2：传统线索卡片流 -->
+        <div id="clueCardsWrapper" class="space-y-2.5 overflow-y-auto hidden flex-1 pr-1">
+          <div class="space-y-2.5" id="clueCardsContainer"></div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ==================== 右栏：常驻悬赏 + 4大控制中心技能槽 + 战术顾问 (3列) ==================== -->
+    <section class="lg:col-span-3 flex flex-col gap-3.5 overflow-y-auto pr-1">
+      
+      <!-- 即刻行动微悬赏 (Apple Interactive Widget Card) -->
+      <div id="bountyCard" class="apple-glass-card p-4 border border-emerald-500/35 relative overflow-hidden" style="background: linear-gradient(165deg, rgba(48, 209, 88, 0.1), rgba(15, 23, 42, 0.75));">
+        <div class="flex items-center justify-between pb-2 mb-2 border-b border-white/10">
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+            <span>📌</span> 即刻行动微动作
+          </span>
+          <span class="text-[10px] text-emerald-400 font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-400/25">⚡ 2分钟可执行</span>
+        </div>
+
+        <div class="bg-black/40 p-3 rounded-xl border border-white/10">
+          <div class="text-xs font-bold text-white leading-snug" id="bountyTitle">
+            执行 15 分钟遮光眼罩 A/B 对照实测
+          </div>
+          <div class="mt-1 text-[11px] text-white/60">
+            对比眼球完全放松前后的 4-8Hz 方差衰减率
+          </div>
+          <div class="mt-3 flex items-center justify-between pt-2 border-t border-white/10 text-[11px]">
+            <span class="text-white/40 font-mono">预估: 15 min</span>
+            <button onclick="handleCompleteBounty()" id="btnWarRoomCheck" class="apple-capsule-btn apple-btn-success px-3.5 py-1 text-xs font-bold shadow-lg">
+              <span>✓ 达成行动</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 大战术透镜技能槽 (Apple Control Center Action Tiles) -->
+      <div class="apple-glass-card p-3.5">
+        <div class="text-xs font-bold text-white/80 mb-2.5 flex items-center justify-between">
+          <span class="flex items-center gap-1.5"><span>✨</span> 战术透镜技能槽</span>
+          <span class="text-[10px] text-white/40 font-mono">快捷推演</span>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="castTacticalSpell('socratic')" class="apple-action-tile border-sky-500/25 hover:border-sky-500/50">
+            <span class="text-lg">🔍</span>
+            <span class="text-xs font-bold text-sky-300">穿透追问</span>
+            <span class="text-[9px] text-white/40">防过早定义</span>
+          </button>
+
+          <button onclick="castTacticalSpell('hypotheses')" class="apple-action-tile border-purple-500/25 hover:border-purple-500/50">
+            <span class="text-lg">💡</span>
+            <span class="text-xs font-bold text-purple-300">发散假设</span>
+            <span class="text-[9px] text-white/40">生成竞争解</span>
+          </button>
+
+          <button onclick="castTacticalSpell('test')" class="apple-action-tile border-amber-500/25 hover:border-amber-500/50">
+            <span class="text-lg">⚡</span>
+            <span class="text-xs font-bold text-amber-300">最小验证</span>
+            <span class="text-[9px] text-white/40">击破Action=0</span>
+          </button>
+
+          <button onclick="castTacticalSpell('attribution')" class="apple-action-tile border-rose-500/25 hover:border-rose-500/50">
+            <span class="text-lg">🎯</span>
+            <span class="text-xs font-bold text-rose-300">失败归因</span>
+            <span class="text-[9px] text-white/40">层级排查</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 战术顾问 (Apple Intelligence Siri Iridescent Card) -->
+      <div class="apple-intelligence-card p-4 flex-1 flex flex-col justify-between shadow-2xl">
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-lg">🤖</span>
+            <span class="text-xs font-bold text-indigo-200">战术顾问 · 防走偏锐评</span>
+          </div>
+          <p class="text-xs text-white/80 leading-relaxed font-sans" id="tacticalAdvisorText">
+            “指挥官，警惕虚假忙碌 (Activity ≠ Progress)！不要再看第 13 篇文献了，现在整个系统的唯一致命卡点是肌电伪迹，快去跑 15 分钟眼罩实测！”
+          </p>
+        </div>
+
+        <div class="mt-3 pt-2.5 border-t border-white/10 flex justify-between items-center text-[10px] text-white/40">
+          <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span> 认知雷达监控中</span>
+          <span class="text-sky-400 cursor-pointer hover:underline font-medium" onclick="castTacticalSpell('socratic')">请求深层诊断 ›</span>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ==================== 苹果风格原生模态弹窗 (Apple Sheet Modals) ==================== -->
+  
+  <!-- 1. 战术透镜推演弹窗 (Spell Cast Modal) -->
+  <div id="spellModal" class="fixed inset-0 bg-black/70 backdrop-blur-xl z-50 flex items-center justify-center p-4 hidden">
+    <div class="apple-glass-card max-w-lg w-full p-6 shadow-2xl border border-white/20">
+      <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-3.5">
+        <div class="flex items-center gap-2">
+          <span id="modalSpellIcon" class="text-2xl">🔮</span>
+          <h3 id="modalSpellTitle" class="text-sm font-black text-white tracking-tight">战术透镜推演</h3>
+        </div>
+        <button onclick="closeSpellModal()" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-white/70 flex items-center justify-center text-xs transition">✕</button>
+      </div>
+
+      <div class="my-3 p-3 bg-black/50 border border-white/10 rounded-xl">
+        <div class="text-[11px] font-semibold text-sky-400 mb-0.5">推演焦点:</div>
+        <div class="text-xs text-white/90 font-mono" id="modalSpellFocus">
+          当前核心问题
+        </div>
+      </div>
+
+      <div class="space-y-1.5 mb-4">
+        <div class="text-xs font-bold text-white/70">推演见解输出:</div>
+        <div id="modalSpellOutput" class="text-xs text-white/90 leading-relaxed bg-black/40 p-3.5 rounded-xl border border-white/10 max-h-52 overflow-y-auto whitespace-pre-wrap">
+          计算中...
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2.5 pt-3 border-t border-white/10">
+        <button onclick="closeSpellModal()" class="apple-capsule-btn apple-btn-subtle px-4 py-1.5 text-xs font-semibold">关闭</button>
+        <button onclick="spinoffToQuest()" class="apple-capsule-btn apple-btn-primary px-4 py-1.5 text-xs font-bold shadow-md">＋ 沉淀为新线索节点</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. 探索里程碑与认知胜利殿堂 (Apple Fitness+ Style Triumphs Modal) -->
+  <div id="skillTreeModal" class="fixed inset-0 bg-black/70 backdrop-blur-xl z-50 flex items-center justify-center p-4 hidden">
+    <div class="apple-glass-card max-w-2xl w-full p-6 shadow-2xl flex flex-col max-h-[85vh] border border-white/20">
+      <div class="flex items-center justify-between pb-3.5 border-b border-white/10 mb-3 flex-shrink-0">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">🏆</span>
+          <div>
+            <h3 class="text-sm font-black text-white tracking-tight">探索里程碑与认知胜利殿堂 (Triumphs & Milestones)</h3>
+            <p class="text-[10px] text-white/50 mt-0.5">抵抗虚假忙碌 · 铸就探索直觉 · 解锁认知特性赋能</p>
+          </div>
+        </div>
+        <button onclick="skillTree.closeModal()" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-white/70 flex items-center justify-center text-xs transition">✕</button>
+      </div>
+
+      <div id="triumphListContainer" class="space-y-3 overflow-y-auto flex-1 pr-1">
+        <!-- 动态渲染胜利徽章 -->
+      </div>
+
+      <div class="flex justify-end pt-3 mt-3 border-t border-white/10 flex-shrink-0">
+        <button onclick="skillTree.closeModal()" class="apple-capsule-btn apple-btn-subtle px-5 py-1.5 text-xs font-semibold">返回指挥大屏</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. 课题切换与新建战役弹窗 (Apple Files Style Campaign Modal) -->
+  <div id="projectModal" class="fixed inset-0 bg-black/70 backdrop-blur-xl z-50 flex items-center justify-center p-4 hidden">
+    <div class="apple-glass-card max-w-lg w-full p-6 shadow-2xl border border-white/20">
+      <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-3.5">
+        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+          <span>🧭</span> 探索战役课题列表 (Campaigns)
+        </h3>
+        <button onclick="closeProjectModal()" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-white/70 flex items-center justify-center text-xs transition">✕</button>
+      </div>
+
+      <div class="space-y-2 mb-4 max-h-60 overflow-y-auto" id="projectListContainer">
+        <!-- 动态渲染课题列表 -->
+      </div>
+
+      <div class="pt-3 border-t border-white/10">
+        <div class="text-xs font-bold text-white/80 mb-2">新建探索战役课题:</div>
+        <input type="text" id="newProjTitle" class="w-full bg-black/40 border border-white/15 rounded-xl px-3 py-2 text-xs text-white placeholder-white/30 focus:outline-none focus:border-sky-500 mb-2" placeholder="输入新课题名称 (例如: 自动驾驶感知异常归因)...">
+        <textarea id="newProjDesc" rows="2" class="w-full bg-black/40 border border-white/15 rounded-xl px-3 py-2 text-xs text-white placeholder-white/30 focus:outline-none focus:border-sky-500 mb-3 resize-none" placeholder="输入课题背景与探索愿景..."></textarea>
+        <div class="flex justify-end gap-2.5">
+          <button onclick="closeProjectModal()" class="apple-capsule-btn apple-btn-subtle px-4 py-1.5 text-xs">取消</button>
+          <button onclick="handleCreateProject()" class="apple-capsule-btn apple-btn-primary px-4 py-1.5 text-xs font-bold">创建战役</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. 设置弹窗 (macOS System Settings Style Modal) -->
+  <div id="settingsModal" class="fixed inset-0 bg-black/70 backdrop-blur-xl z-50 flex items-center justify-center p-4 hidden">
+    <div class="apple-glass-card max-w-md w-full p-6 shadow-2xl border border-white/20">
+      <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-3.5">
+        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+          <span>⚙️</span> 系统模型配置 (BYOK)
+        </h3>
+        <button onclick="closeSettingsModal()" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-white/70 flex items-center justify-center text-xs transition">✕</button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs text-white/80 font-semibold block mb-1">API Key (DeepSeek / OpenAI)</label>
+          <input type="password" id="inputApiKey" class="w-full bg-black/40 border border-white/15 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500" placeholder="sk-...">
+          <span class="text-[10px] text-white/40 mt-1 block">留空时默认使用内置达芬奇/图灵离线战术启发引擎</span>
+        </div>
+
+        <div>
+          <label class="text-xs text-white/80 font-semibold block mb-1">API 接入点 (Base URL)</label>
+          <input type="text" id="inputBaseUrl" class="w-full bg-black/40 border border-white/15 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500" placeholder="https://api.deepseek.com/v1">
+        </div>
+
+        <div>
+          <label class="text-xs text-white/80 font-semibold block mb-1">模型名称 (Model)</label>
+          <input type="text" id="inputModel" class="w-full bg-black/40 border border-white/15 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-sky-500" placeholder="deepseek-chat">
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2.5 pt-4 mt-3 border-t border-white/10">
+        <button onclick="closeSettingsModal()" class="apple-capsule-btn apple-btn-subtle px-4 py-1.5 text-xs">取消</button>
+        <button onclick="saveSettings()" class="apple-capsule-btn apple-btn-primary px-4 py-1.5 text-xs font-bold">保存配置</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. 全局统一指令面板弹窗 (Apple Spotlight / Raycast Style Command Palette) -->
+  <div id="commandPaletteModal" class="fixed inset-0 bg-black/75 backdrop-blur-xl z-50 flex items-start justify-center pt-24 p-4 hidden">
+    <div class="apple-glass-card max-w-xl w-full p-4 shadow-2xl border border-white/20">
+      <div class="flex items-center gap-2.5 px-3.5 py-2.5 bg-black/50 border border-white/15 rounded-2xl mb-3">
+        <span class="text-lg text-white/50">🔍</span>
+        <input type="text" id="paletteSearchInput" class="w-full bg-transparent text-sm text-white placeholder-white/30 focus:outline-none font-sans" placeholder="输入指令或线索关键词搜索... (↑↓ 选择，Enter 执行)">
+        <kbd class="px-2 py-0.5 rounded-lg bg-white/10 text-[10px] text-white/50 font-mono">Esc</kbd>
+      </div>
+      <div id="paletteResultsList" class="space-y-1 max-h-72 overflow-y-auto pr-1"></div>
+    </div>
+  </div>
+
+  <!-- 6. 认知圣物与战利品宝库弹窗 (Epistemic Relic Vault Modal) -->
+  <div id="relicVaultModal" class="fixed inset-0 bg-black/75 backdrop-blur-xl z-50 flex items-center justify-center p-4 hidden">
+    <div class="apple-glass-card max-w-xl w-full p-6 shadow-2xl flex flex-col max-h-[85vh] border border-white/20">
+      <div class="flex items-center justify-between pb-3.5 border-b border-white/10 mb-3 flex-shrink-0">
+        <div class="flex items-center gap-3">
+          <span class="text-3xl">💎</span>
+          <div>
+            <h3 class="text-sm font-black text-white tracking-tight">认知圣物与战利品宝库 (Epistemic Relics)</h3>
+            <p class="text-[10px] text-white/50 mt-0.5">击破守门 BOSS 随机掉落 · 佩戴获得永久被动认知加成</p>
+          </div>
+        </div>
+        <button onclick="relicEngine.closeVaultModal()" class="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-white/70 flex items-center justify-center text-xs transition">✕</button>
+      </div>
+      <div id="relicListContainer" class="space-y-2.5 overflow-y-auto flex-1 pr-1"></div>
+      <div class="flex justify-end pt-3 mt-3 border-t border-white/10 flex-shrink-0">
+        <button onclick="relicEngine.closeVaultModal()" class="apple-capsule-btn apple-btn-subtle px-5 py-1.5 text-xs font-semibold">返回指挥大屏</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. 击溃首领/圣物掉落炫彩浮层 (Apple-style Loot Drop Toast) -->
+  <div id="lootDropPopup" class="fixed top-14 left-1/2 -translate-x-1/2 z-50 hidden transition-all duration-300 transform scale-90 opacity-0 pointer-events-none">
+    <div class="apple-glass-card p-4 border border-amber-400/60 bg-gradient-to-r from-amber-500/20 via-purple-600/20 to-sky-500/20 shadow-2xl flex items-center gap-3.5 rounded-2xl pointer-events-auto">
+      <div class="w-12 h-12 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center text-2xl shadow-lg font-black" id="lootIcon">💎</div>
+      <div>
+        <div class="text-[10px] uppercase font-bold text-amber-300 tracking-wider flex items-center gap-1.5">
+          <span>✨ 击溃首领！获得探索认知战利品</span>
+        </div>
+        <div class="text-sm font-black text-white tracking-tight" id="lootTitle">奥卡姆极简剃刀</div>
+        <div class="text-[11px] text-white/70" id="lootDesc">坚持极简因果模型</div>
+        <div class="text-[10px] text-emerald-400 font-mono font-semibold" id="lootBuff">⚡ 聚焦效率提升 +25%</div>
+      </div>
+      <button onclick="relicEngine.closeLootDrop()" class="w-6 h-6 rounded-full bg-white/10 hover:bg-white/20 text-white/70 flex items-center justify-center text-xs ml-2">✕</button>
+    </div>
+  </div>
+
+  <!-- 服务引擎脚本挂载 -->
+  <script src="services/audio-fx.js"></script>
+  <script src="services/particles.js"></script>
+  <script src="services/clue-canvas.js"></script>
+  <script src="services/boss-engine.js"></script>
+  <script src="services/skill-tree.js"></script>
+  <script src="services/relic-engine.js"></script>
+  <script src="services/command-palette.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>

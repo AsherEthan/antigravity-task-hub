@@ -1,0 +1,126 @@
+<!-- pages/index/index.wxml -->
+<view class="page-container">
+  
+  <!-- 顶部项目切换与导航栏 -->
+  <view class="nav-bar glass-card shadow-sm">
+    <view class="project-selector" hover-class="tap-active" bindtap="goToProjects">
+      <view class="project-icon-box">
+        <text class="project-icon">🧭</text>
+      </view>
+      <view class="project-info">
+        <text class="project-label">战役战术总览 · 主线进行中</text>
+        <view class="title-row">
+          <text class="project-title text-ellipsis">{{activeProject.title || '加载中...'}}</text>
+          <text class="switch-arrow">▾</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="nav-actions">
+      <view class="action-btn" hover-class="tap-active" bindtap="goToSettings">
+        <text class="action-icon">⚙️</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 探索流主滚动区域 -->
+  <scroll-view 
+    scroll-y="true" 
+    class="main-scroll" 
+    refresher-enabled="true" 
+    refresher-triggered="{{isRefreshing}}" 
+    bindrefresherrefresh="onPullRefresh"
+  >
+    <!-- 顶部认知状态舵盘 -->
+    <state-cockpit 
+      cockpit="{{currentCockpit}}" 
+      is-syncing="{{isCockpitSyncing}}" 
+      bind:sync="onCockpitSync"
+      bind:edit="onCockpitManualEdit"
+    />
+
+    <!-- 流水信息与分类过滤条 -->
+    <view class="stream-header">
+      <view class="stream-header-left">
+        <text class="stream-title">调查员手记与情报网 (Intel Notes)</text>
+        <text class="stream-count">{{filteredItems.length}} 条线索</text>
+      </view>
+
+      <scroll-view class="filter-scroll" scroll-x="true" enable-flex="true">
+        <view class="filter-row">
+          <view 
+            class="filter-chip {{activeFilter === 'all' ? 'chip-active' : ''}}" 
+            data-filter="all" 
+            bindtap="setFilter"
+          >全部</view>
+          <view 
+            class="filter-chip {{activeFilter === 'observation' ? 'chip-active-obs' : ''}}" 
+            data-filter="observation" 
+            bindtap="setFilter"
+          >👁️观察</view>
+          <view 
+            class="filter-chip {{activeFilter === 'question' ? 'chip-active-que' : ''}}" 
+            data-filter="question" 
+            bindtap="setFilter"
+          >❓疑问</view>
+          <view 
+            class="filter-chip {{activeFilter === 'hypothesis' ? 'chip-active-hyp' : ''}}" 
+            data-filter="hypothesis" 
+            bindtap="setFilter"
+          >💡假设</view>
+          <view 
+            class="filter-chip {{activeFilter === 'evidence' ? 'chip-active-evi' : ''}}" 
+            data-filter="evidence" 
+            bindtap="setFilter"
+          >🔬证据</view>
+          <view 
+            class="filter-chip {{activeFilter === 'bottleneck' ? 'chip-active-bot' : ''}}" 
+            data-filter="bottleneck" 
+            bindtap="setFilter"
+          >🚧瓶颈</view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 探索流条目列表 -->
+    <view class="stream-list" wx:if="{{filteredItems && filteredItems.length > 0}}">
+      <stream-item 
+        wx:for="{{filteredItems}}" 
+        wx:key="_id" 
+        item="{{item}}" 
+        bind:triggerlens="onItemTriggerLens"
+        bind:spinoff="onItemSpinOff"
+        bind:deleteitem="onItemDelete"
+      />
+    </view>
+
+    <!-- 空白缺省提示 -->
+    <view class="empty-state" wx:else>
+      <text class="empty-icon">🌱</text>
+      <text class="empty-title">当前分类暂无探索记录</text>
+      <text class="empty-desc">在未知领域中，从敏锐的“观察”或核心“疑问”开始</text>
+    </view>
+
+    <!-- 底部垫高占位，防止被固定输入栏遮挡 -->
+    <view class="bottom-placeholder"></view>
+  </scroll-view>
+
+  <!-- 底部吸底极简认知录入栏 -->
+  <view class="fixed-bottom-bar">
+    <quick-input bind:submit="onQuickInputSubmit" />
+  </view>
+
+  <!-- 统一认知透镜 / 舵盘提炼弹窗 -->
+  <lens-dialog 
+    visible="{{dialogVisible}}"
+    mode="{{dialogMode}}"
+    is-loading="{{isDialogLoading}}"
+    dialog-title="{{dialogTitle}}"
+    cockpit-proposal="{{dialogCockpitProposal}}"
+    lens-result="{{dialogLensResult}}"
+    bind:close="onDialogClose"
+    bind:confirmcockpit="onDialogConfirmCockpit"
+    bind:mountlens="onDialogMountLens"
+  />
+
+</view>

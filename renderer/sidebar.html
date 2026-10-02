@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Antigravity 贴附侧边栏探索任务中枢</title>
+  <link rel="stylesheet" href="sidebar.css">
+</head>
+<body>
+  <div id="sidebarContainer" class="sidebar-container">
+    
+    <!-- 1. Header with Antigravity Branding & Controls -->
+    <header class="sidebar-header">
+      <div class="brand-section">
+        <div class="brand-logo" title="Google Antigravity Task Hub">🧭</div>
+        <div class="brand-info">
+          <div class="brand-title">
+            <span>Antigravity</span>
+            <span class="brand-badge">SIDEBAR</span>
+          </div>
+          <div class="brand-subtitle">现场伴随 · 认知降阻中枢</div>
+        </div>
+      </div>
+      <div class="header-controls">
+        <button id="btnPinSidebar" class="ctrl-btn" title="切换置顶固定 (Pin to Top)">📌</button>
+        <button id="btnToggleHistory" class="ctrl-btn" title="产出物历史归档 (Artifact History)">📚</button>
+        <button id="btnCloseSidebar" class="ctrl-btn ctrl-btn-close" title="收起隐藏侧边栏 (Esc / Alt+S)">✕</button>
+      </div>
+    </header>
+
+    <!-- 1.5 Lightweight Causal Breadcrumbs & Epistemic Clarity (Suite 10) -->
+    <section id="causalBreadcrumbs" class="causal-breadcrumbs" aria-label="因果步骤阶段">
+      <div class="breadcrumbs-track">
+        <span class="crumb-item phase-node breadcrumb-stage active current-phase" data-active="true" data-phase="0">现象</span>
+        <span class="crumb-separator">→</span>
+        <span class="crumb-item phase-node breadcrumb-stage" data-phase="1">疑问</span>
+        <span class="crumb-separator">→</span>
+        <span class="crumb-item phase-node breadcrumb-stage" data-phase="2">假说</span>
+        <span class="crumb-separator">→</span>
+        <span class="crumb-item phase-node breadcrumb-stage" data-phase="3">证据</span>
+        <span class="crumb-separator">→</span>
+        <span class="crumb-item phase-node breadcrumb-stage" data-phase="4">突破</span>
+      </div>
+      <div class="breadcrumbs-meta">
+        <span id="breadcrumbClarity" class="clarity-badge delta-qt clarity-score">ΔQt: 58%</span>
+        <button id="btnToggleWarRoom" class="apple-capsule-btn war-room-btn" title="展开全景因果大屏复盘 (Alt+W)">全景复盘 ↗</button>
+      </div>
+    </section>
+
+    <!-- 2. Scrollable Body Content -->
+    <main class="sidebar-body">
+      
+      <!-- In-situ Context Mounted Chips Section -->
+      <section id="mountedChips" class="context-chips-container" aria-label="挂载上下文标签"></section>
+
+      <!-- Slash Command & Prompt Input Section -->
+      <section class="input-section">
+        <div class="prompt-bar-wrapper">
+          <span class="prompt-prefix">/</span>
+          <input
+            id="sidebarPromptInput"
+            type="text"
+            class="prompt-input"
+            placeholder="输入 /plan, /shred, /solve 或输入 @clipboard 进行现场拆解..."
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button id="btnSendPrompt" class="send-btn" title="执行 (Enter)">➔</button>
+        </div>
+
+        <!-- Quick Action Shortcuts -->
+        <div class="quick-actions-bar">
+          <button id="btnQuickMountClipboard" class="quick-action-btn" title="将系统剪贴板内容挂载为思考上下文">
+            <span>📋</span>
+            <span>挂载剪贴板</span>
+          </button>
+          <button id="btnQuickShred" class="quick-action-btn btn-shred" data-command="/shred" title="极简粉碎为3步物理动作 (≤2分钟)">
+            <span>⚡</span>
+            <span>/shred 3步物理动作</span>
+          </button>
+          <button id="btnQuickSolve" class="quick-action-btn btn-solve" data-command="/solve" title="第一性原理卡点诊断与15分钟证伪测试">
+            <span>🧩</span>
+            <span>/solve 第一性破局</span>
+          </button>
+          <button id="btnQuickPlan" class="quick-action-btn btn-plan" data-command="/plan" title="分阶段步骤推进计划">
+            <span>📜</span>
+            <span>/plan 执行步骤</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Active Artifact Card Section -->
+      <section id="activeArtifactCard" class="artifact-card-area">
+        <!-- Rendered dynamically via sidebar.js -->
+        <div class="artifact-empty-state">
+          <div class="empty-icon">🎯</div>
+          <div class="empty-title">就地呼出 · 现场拆解 · 即刻启动</div>
+          <div class="empty-desc">
+            在输入框输入 <code>/shred</code>、<code>/solve</code> 或 <code>/plan</code>，或点击上方「挂载剪贴板」，即可生成高质感可执行步骤产出物。
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- 3. Artifact History Drawer (Slide-in) -->
+    <aside id="historyDrawer" class="history-drawer" aria-label="产出物历史归档">
+      <div class="drawer-header">
+        <div class="drawer-title">
+          <span>📚</span>
+          <span>历史产出物沉淀 (Artifacts)</span>
+        </div>
+        <button id="btnCloseHistory" class="ctrl-btn" title="关闭归档抽屉">✕</button>
+      </div>
+      <div id="historyList" class="history-list">
+        <div class="history-empty-text">暂无历史沉淀产出物</div>
+      </div>
+    </aside>
+
+    <!-- 4. Global Toast Notifications Container -->
+    <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  </div>
+
+  <script src="sidebar.js"></script>
+</body>
+</html>
